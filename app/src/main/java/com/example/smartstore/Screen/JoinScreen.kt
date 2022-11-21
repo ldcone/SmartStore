@@ -1,4 +1,4 @@
-package com.example.smartstore
+package com.example.smartstore.Screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,16 +8,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.smartstore.R
 import com.example.smartstore.data.LoginUiState
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
+import com.example.smartstore.viewmodel.LoginViewModel
 
 class JoinScreen {
     @Composable
