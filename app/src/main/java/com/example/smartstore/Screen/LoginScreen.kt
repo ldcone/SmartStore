@@ -1,4 +1,4 @@
-package com.example.smartstore
+package com.example.smartstore.Screen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -19,8 +19,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.smartstore.R
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
+import com.example.smartstore.viewmodel.LoginViewModel
 
 enum class LoginScreen() {
     LoginScreen,

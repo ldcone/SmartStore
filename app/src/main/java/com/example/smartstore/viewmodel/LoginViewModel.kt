@@ -1,4 +1,4 @@
-package com.example.smartstore
+package com.example.smartstore.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
