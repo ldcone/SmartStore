@@ -4,6 +4,7 @@ import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.smartstore.R
@@ -25,23 +26,25 @@ val ElandNiceface = FontFamily(
 
 val Typography = Typography(
     h1 = TextStyle(
-        fontFamily = Cafe24face,
-        fontWeight = FontWeight.Normal,
-        fontSize = 30.sp
+        fontFamily = ElandChoiceface,
+        fontWeight = FontWeight.Bold,
+        fontSize = 35.sp,
+        color = CaffeDarkBrown
     ),
     h2 = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontSize = 30.sp,
+        color = CaffeDarkBrown
     ),
     h3 = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontSize = 25.sp
     ),
     body1 = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 20.sp
     )
 )
