@@ -2,6 +2,6 @@
 <resources>
 
     <style name="Theme.SmartStore" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:statusBarColor">@color/coffee_brown</item>
     </style>
 </resources>
