@@ -1,5 +1,6 @@
 package com.example.smartstore.Screen
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,7 +20,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.smartstore.MainActivity
 import com.example.smartstore.R
+import com.example.smartstore.data.LoginUiState
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.LoginViewModel
@@ -45,6 +48,14 @@ fun LoginApp(
         ){
             composable(route = LoginScreen.LoginScreen.name){
                 LoginPage(
+                    onLoginButtonClicked = { loginState ->
+                        val result = viewModel.checkLogin(loginState)
+                        if(result){
+                            context.startActivity(Intent(context, MainActivity::class.java))
+                        }else{
+                            Toast.makeText(context, "아이디 혹은 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     onJoinButtonClicked = {
                         navController.navigate(LoginScreen.JoinScreen.name)
                     }
@@ -53,6 +64,11 @@ fun LoginApp(
             composable(route = LoginScreen.JoinScreen.name){
                 JoinScreen().JoinPage(viewModel,
                     onDuplicateButtonClicked = { id ->
+                        if(id.isEmpty()){
+                            Toast.makeText(context, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            return@JoinPage
+                        }
+
                         viewModel.checkDuplicate(id)
 
                         if (!viewModel.uiState.value.isChecked) {
@@ -85,6 +101,7 @@ fun LoginApp(
 
 @Composable
 fun LoginPage(
+    onLoginButtonClicked: (LoginUiState) -> Unit,
     onJoinButtonClicked: () -> Unit
 ) {
     Column(
@@ -95,12 +112,16 @@ fun LoginPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
-        LoginComponent(onJoinButtonClicked = onJoinButtonClicked)
+        LoginComponent(
+            onLoginButtonClicked = onLoginButtonClicked,
+            onJoinButtonClicked = onJoinButtonClicked
+        )
     }
 }
 
 @Composable
 fun LoginComponent(
+    onLoginButtonClicked: (LoginUiState) -> Unit,
     onJoinButtonClicked:() ->(Unit)
 ){
     var id by remember { mutableStateOf("") }
@@ -139,7 +160,11 @@ fun LoginComponent(
             modifier = Modifier.padding(8.dp)
         ){
             Button(
-                onClick = {  },
+                onClick = {
+                    val loginState = LoginUiState(id, password, "",false)
+                    onLoginButtonClicked(loginState)
+                    resetLoginInfo(id, password)
+                },
                 Modifier
                     .background(CaffeDarkBrown, shape = MaterialTheme.shapes.large)
                     .weight(1.0f)
@@ -164,6 +189,11 @@ fun LoginComponent(
     }
 }
 
+private fun resetLoginInfo(id:String, password:String){
+
+}
+
+// 로그인 화면으로 돌아오기
 private fun backToLogin(
     viewModel: LoginViewModel,
     navController: NavController
@@ -177,6 +207,6 @@ private fun backToLogin(
 @Composable
 fun DefaultPreview2() {
     SmartStoreTheme {
-        LoginPage(onJoinButtonClicked = {})
+        LoginPage(onLoginButtonClicked = {}, onJoinButtonClicked = {})
     }
 }

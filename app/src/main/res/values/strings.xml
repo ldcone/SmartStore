@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SmartStore</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="bottom_home">Home</string>
+    <string name="bottom_order">Order</string>
+    <string name="bottom_myPage">MyPage</string>
 </resources>
