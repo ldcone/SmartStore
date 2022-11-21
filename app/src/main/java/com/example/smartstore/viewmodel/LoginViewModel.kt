@@ -29,7 +29,7 @@ class LoginViewModel:ViewModel() {
 
         Log.d(TAG, "id : $id, 결과 : ${_id == id}")
 
-        if(_id == id){
+        if(_id == id || id.isEmpty()){
             _uiState.update{ currentState ->
                 currentState.copy(
                     isChecked = false
@@ -42,7 +42,6 @@ class LoginViewModel:ViewModel() {
                 )
             }
         }
-
         Log.d(TAG, "checkDuplicate: ${uiState.value.isChecked}")
     }
 
@@ -64,5 +63,14 @@ class LoginViewModel:ViewModel() {
     // viewModel 값 초기화
     fun resetState(){
         setLoginInfo("","","",false)
+    }
+
+    // 로그인 확인
+    fun checkLogin(loginInfo: LoginUiState):Boolean{
+        if(loginInfo.id == "test" && loginInfo.password == "1234"){
+            return true
+        }else{
+            return false
+        }
     }
 }
