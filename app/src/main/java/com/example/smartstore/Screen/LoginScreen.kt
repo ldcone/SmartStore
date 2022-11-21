@@ -26,6 +26,7 @@ import com.example.smartstore.data.LoginUiState
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.LoginViewModel
+import kotlinx.coroutines.*
 
 enum class LoginScreen() {
     LoginScreen,
@@ -69,7 +70,9 @@ fun LoginApp(
                             return@JoinPage
                         }
 
-                        viewModel.checkDuplicate(id)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.checkDuplicate(id)
+                        }
 
                         if (!viewModel.uiState.value.isChecked) {
                             Toast.makeText(context, "중복된 아이디입니다.", Toast.LENGTH_SHORT).show()
