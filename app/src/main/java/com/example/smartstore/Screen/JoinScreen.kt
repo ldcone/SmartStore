@@ -1,11 +1,13 @@
 package com.example.smartstore.Screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,6 +22,7 @@ import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.LoginViewModel
 
+private const val TAG = "JoinScreen_싸피"
 class JoinScreen {
     @Composable
     fun JoinPage(
@@ -45,7 +48,7 @@ class JoinScreen {
         onDuplicateButtonClicked:(String) -> Unit = {},
         onJoinButtonClicked:(LoginUiState) -> Unit = {}
     ){
-        var isChecked by remember{ mutableStateOf(false) }
+        var isChecked = viewModel.checkState.observeAsState(false)
         var id by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var nickname by remember { mutableStateOf("") }
@@ -76,7 +79,7 @@ class JoinScreen {
                 IconButton(
                     onClick = {
                         onDuplicateButtonClicked(id)
-                        isChecked = viewModel.uiState.value.isChecked
+                        Log.d(TAG, "JoinComponent: isChecked : ${isChecked}")
                     },
                     Modifier
                         .background(CaffeDarkBrown)
@@ -85,13 +88,15 @@ class JoinScreen {
                         .height(32.dp)
                 ) {
                     Icon(
-                        painter = if(!isChecked){
+                        painter = if(!isChecked.value){
                             painterResource(id = R.drawable.check_mark)
                         }else{
                             painterResource(id = R.drawable.check)
                          },
                         contentDescription = null,
-                        Modifier.fillMaxHeight().fillMaxWidth()
+                        Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
                     )
                 }
             }
@@ -123,7 +128,8 @@ class JoinScreen {
             ){
                 Button(
                     onClick = {
-                        val loginState = LoginUiState(id, password, nickname, isChecked)
+                        val loginState = LoginUiState(id, password, nickname, isChecked.value)
+                        Log.d(TAG, "JoinComponent join button clicked: ${loginState.isChecked}")
                         onJoinButtonClicked(loginState)
                   },
                     Modifier

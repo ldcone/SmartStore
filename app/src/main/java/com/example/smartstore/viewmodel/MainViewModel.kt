@@ -3,8 +3,8 @@ package com.example.smartstore.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.smartstore.dto.Product
-import com.example.smartstore.util.RetrofitUtil
+import com.ssafy.smartstore.dto.Product
+import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
 
 const val HOME = "home"

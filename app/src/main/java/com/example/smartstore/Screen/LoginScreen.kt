@@ -1,6 +1,8 @@
 package com.example.smartstore.Screen
 
+import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,14 +22,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.smartstore.ApplicationClass
 import com.example.smartstore.MainActivity
 import com.example.smartstore.R
 import com.example.smartstore.data.LoginUiState
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.LoginViewModel
+import com.ssafy.smartstore.dto.User
 import kotlinx.coroutines.*
 
+
+private const val TAG = "LoginScreen_싸피"
 enum class LoginScreen() {
     LoginScreen,
     JoinScreen
@@ -35,26 +41,49 @@ enum class LoginScreen() {
 
 @Composable
 fun LoginApp(
+    user:User,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = LoginViewModel(),
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
 ){
     val context = LocalContext.current
     val navController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
     Scaffold { innerPadding->
+        var startScreen = LoginScreen.LoginScreen.name
+        if(user.id != ""){
+            //startScreen = LoginScreen
+        }
         NavHost(
             navController = navController,
             startDestination = LoginScreen.LoginScreen.name,
             modifier = Modifier.padding(innerPadding)
         ){
             composable(route = LoginScreen.LoginScreen.name){
+                viewModel.resetState()
                 LoginPage(
                     onLoginButtonClicked = { loginState ->
-                        val result = viewModel.checkLogin(loginState)
-                        if(result){
-                            context.startActivity(Intent(context, MainActivity::class.java))
+                        var loginUser:User? = null
+                        if(loginState.id.isEmpty()){
+                            Toast.makeText(context, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                        }else if(loginState.password.isEmpty()){
+                            Toast.makeText(context, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
                         }else{
-                            Toast.makeText(context, "아이디 혹은 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
+                            coroutineScope.launch{
+                                val job = CoroutineScope(Dispatchers.IO).async{
+                                    loginUser = viewModel.checkLogin(loginState)
+                                }
+
+                                job.await()
+
+                                if(loginUser != null){
+                                    context.startActivity(Intent(context, MainActivity::class.java))
+                                    ApplicationClass.sharedPreferencesUtil.addUser(loginUser!!)
+                                }else{
+                                    Toast.makeText(context, "아이디 혹은 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
                         }
                     },
                     onJoinButtonClicked = {
@@ -65,23 +94,31 @@ fun LoginApp(
             composable(route = LoginScreen.JoinScreen.name){
                 JoinScreen().JoinPage(viewModel,
                     onDuplicateButtonClicked = { id ->
+                        var isDuplicated = false
                         if(id.isEmpty()){
                             Toast.makeText(context, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
                             return@JoinPage
                         }
 
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewModel.checkDuplicate(id)
-                        }
+                        coroutineScope.launch {
+                            val job = CoroutineScope(Dispatchers.IO).async {
+                                isDuplicated = viewModel.checkDuplicate(id)
+                            }
+                            job.await()
 
-                        if (!viewModel.uiState.value.isChecked) {
-                            Toast.makeText(context, "중복된 아이디입니다.", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "사용가능한 아이디입니다.", Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "LoginApp: isChecked : ${isDuplicated}")
+
+                            if (isDuplicated) {
+                                Toast.makeText(context, "중복된 아이디입니다.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "사용가능한 아이디입니다.", Toast.LENGTH_SHORT).show()
+                            }
+
                         }
                     },
                     onJoinButtonClicked = { loginInfo ->
                         val result = viewModel.checkJoinData(loginInfo)
+                        var isRegisted = false
                         if(result == 0){
                             Toast.makeText(context, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
                         }else if(result == 1){
@@ -91,8 +128,20 @@ fun LoginApp(
                         }else if(result == 3){
                             Toast.makeText(context, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show()
                         }else{
-                            Toast.makeText(context, "가입 되었습니다.", Toast.LENGTH_SHORT).show()
-                            backToLogin(viewModel, navController)
+                            coroutineScope.launch{
+                                val job = CoroutineScope(Dispatchers.IO).async {
+                                    isRegisted = viewModel.registUser(loginInfo)
+                                }
+
+                                job.await()
+
+                                if(isRegisted){
+                                    Toast.makeText(context, "가입 되었습니다.", Toast.LENGTH_SHORT).show()
+                                    backToLogin(viewModel, navController)
+                                }else{
+                                    Toast.makeText(context, "가입 도중 실패했습니다.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     }
                 )

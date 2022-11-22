@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartstore.R
-import com.example.smartstore.dto.Product
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
+import com.ssafy.smartstore.dto.Product
 
 
 @SuppressLint("CoroutineCreationDuringComposition")

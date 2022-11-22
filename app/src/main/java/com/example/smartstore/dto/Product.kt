@@ -1,4 +1,4 @@
-package com.example.smartstore.dto
+package com.ssafy.smartstore.dto
 
 data class Product (
     val id: Int,
