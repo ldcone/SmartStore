@@ -2,51 +2,60 @@ package com.example.smartstore.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.RatingBar
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartstore.ApplicationClass
-import com.example.smartstore.R
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
+import com.gowtham.ratingbar.RatingBar
 import com.skydoves.landscapist.glide.GlideImage
 import com.ssafy.smartstore.dto.Product
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import java.lang.Math.ceil
+import java.lang.Math.floor
+import java.time.format.TextStyle
 
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "RememberReturnType")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
  fun OrderDetailScreen(viewModel: MainViewModel){
 //    var prodlist = viewModel.allProduct.value
 //    val prod = viewModel.Product!!
+    var rating : Float by remember {
+        mutableStateOf(3.0f)
+    }
+    var hasFocus by remember { mutableStateOf(false) }
+    var comment by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,8 +133,114 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
             }
         }
 
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .background(Color.Cyan)
+        ){
+          Row {
+              Text(text="평점",
+                  Modifier.padding(start = 10.dp),
+                  fontWeight = FontWeight.Bold,
+                  fontSize = 25.sp
+              )
+              Text(text="3.2점",
+                  Modifier.padding(start = 7.dp, top = 2.dp),
+                  fontSize = 20.sp
+              )
+              RatingBar(value = rating,
+                  onValueChange ={
+                      rating=it
+                  },
+                  onRatingChanged ={
+                      Log.d("Rating","onRatingChanged:$it")
+                  },
+                  modifier = Modifier.padding(start = 130.dp)
+              )
+          }
+        }
+//        Card(
+//            modifier = Modifier
+//                .padding(top = 10.dp)
+//                .height(40.dp)
+//                .width(270.dp),
+//            border = BorderStroke(2.dp, color = Color.Red)
+//        ) {
+//            OutlinedTextField(
+//                value = comment,
+//                onValueChange = { comment= it },
+//                singleLine = true,
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+//                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+//
+//            )
+//        }
+        Row(
+            Modifier.fillMaxWidth().height(80.dp),
+            horizontalArrangement = Arrangement.Center) {
+            OutlinedTextField(
+                value = comment,
+                onValueChange = { comment = it },
+                label = { Text("Enter text") },
+                maxLines = 1,
+                textStyle = androidx.compose.ui.text.TextStyle(
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold
+                ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Blue,
+                    unfocusedBorderColor = Color.Red
+                ),
+                shape = RoundedCornerShape(12.dp),
+            )
+            Button(
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.height(60.dp).padding(top =10.dp, start = 10.dp)
+            ) {
+                Text("등록")
+            }
+        }
+
+
+
     }
 }
+
+//@Composable
+//fun RatingBar(
+//    modifier: Modifier = Modifier,
+//    rating: Double = 0.0,
+//    stars: Int = 5,
+//    starsColor: Color = Color.Yellow,
+//) {
+//
+//    val filledStars = floor(rating).toInt()
+//    val unfilledStars = (stars - ceil(rating)).toInt()
+//    val halfStar = !(rating.rem(1).equals(0.0))
+//
+//    Row(modifier = modifier) {
+//        repeat(filledStars) {
+//            Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = starsColor)
+//        }
+//
+//        if (halfStar) {
+//            Icon(
+//                imageVector = Icons.Outlined.Star,
+//                contentDescription = null,
+//                tint = starsColor
+//            )
+//        }
+//
+//        repeat(unfilledStars) {
+//            Icon(
+//                imageVector = Icons.Outlined.Star,
+//                contentDescription = null,
+//                tint = starsColor
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun GImage(prod:Product){
