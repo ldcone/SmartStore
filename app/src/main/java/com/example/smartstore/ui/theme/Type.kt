@@ -62,7 +62,7 @@ val Typography = Typography(
     ),
     subtitle1 = TextStyle(
         fontFamily = ElandChoiceface,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 13.sp,
         color = CaffeDarkBrown
     )

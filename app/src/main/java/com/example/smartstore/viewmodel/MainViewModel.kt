@@ -20,6 +20,7 @@ const val MYPAGE = "myPage"
 private const val TAG = "MainViewModel_싸피"
 class MainViewModel():ViewModel() {
     val user = ApplicationClass.sharedPreferencesUtil.getUser()
+    var Product:Product?=null
     var allProduct: MutableLiveData<List<Product>> = MutableLiveData<List<Product>>()
     var allRecentOrder: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData<List<LatestOrderResponse>>()
 
@@ -52,7 +53,7 @@ class MainViewModel():ViewModel() {
                     }
                 }else{
                     allRecentOrder = MutableLiveData<List<LatestOrderResponse>>()
-                }    
+                }
             }catch(e:IOException){
                 Log.d(TAG, "getRecentOrderList: ${e.message}")   
             }

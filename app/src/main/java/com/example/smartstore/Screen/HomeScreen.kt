@@ -9,14 +9,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.CaffeMenuBack
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
+import com.skydoves.landscapist.glide.GlideImage
 import com.ssafy.smartstore.dto.User
 import com.ssafy.smartstore.dto.UserOrderDetail
 import com.ssafy.smartstore.response.LatestOrderResponse
@@ -84,6 +88,7 @@ fun RecentGridLayout(list: List<LatestOrderResponse>?){
         if(list != null){
             items(list.size){
                 RecentGridItem(item = list[it])
+                Spacer(modifier = Modifier.width(16.dp))
             }
         }else{
             Log.d(TAG, "RecentGridLayout: null data")
@@ -95,30 +100,37 @@ fun RecentGridLayout(list: List<LatestOrderResponse>?){
 fun RecentGridItem(item:LatestOrderResponse){
     Card(
         Modifier
-            .width(200.dp)
+            .width(180.dp)
             .fillMaxHeight()
-            .padding(16.dp)
-            .background(Color.Red)
+            .border(
+                width = 2.dp,
+                color = CaffeDarkBrown,
+                shape = MaterialTheme.shapes.large
+            )
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box(modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-                .border(
-                    width = 2.dp,
-                    color = CaffeMenuBack,
-                    shape = MaterialTheme.shapes.large
-                )){
-                Image(
-                    painter = painterResource(id = com.example.smartstore.R.drawable.logo),
-                    contentDescription = null,
+            Box(
+                Modifier
+                 .clip(MaterialTheme.shapes.large)
+                 .width(100.dp)
+                 .height(100.dp)
+                 .background(CaffeMenuBack),
+                contentAlignment = Alignment.Center
+            ){
+                GlideImage(
+                    imageModel = "${ApplicationClass.MENU_IMGS_URL}${item.img}",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .width(90.dp)
+                        .height(100.dp)
+                        .clip(RoundedCornerShape(20.dp))
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
             Text("${item.productName} 외 ${item.orderCnt - 1} 잔", style = MaterialTheme.typography.subtitle1)
             Spacer(Modifier.height(8.dp))
             Text("${CommonUtils.makeComma(item.totalPrice)}", style = MaterialTheme.typography.subtitle1)
@@ -133,7 +145,7 @@ fun RecentGridItem(item:LatestOrderResponse){
 @Composable
 fun HomePreview(){
     SmartStoreTheme {
-        //RecentGridItem(LatestOrderResponse("",0,"",0,"", Date(),'N',0,"",0))
-        HomeScreen(User("test","유저01","1234",0), viewModel())
+        RecentGridItem(LatestOrderResponse("",0,"",0,"", Date(),'N',0,"",0))
+        //HomeScreen(User("test","유저01","1234",0), viewModel())
     }
 }
