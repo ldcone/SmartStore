@@ -13,6 +13,7 @@ const val MYPAGE = "myPage"
 
 class MainViewModel():ViewModel() {
     var allProduct: MutableLiveData<List<Product>> = MutableLiveData<List<Product>>()
+    var Product:Product?=null
     init {
         getProductList()
     }
