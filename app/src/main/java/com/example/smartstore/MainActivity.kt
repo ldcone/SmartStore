@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val owner = LocalViewModelStoreOwner.current
+                    val user = ApplicationClass.sharedPreferencesUtil.getUser()
                     owner?.let {
                         val viewModel:MainViewModel = viewModel(
                             it,
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
 //                                LocalContext.current.applicationContext as Application
                             )
                         )
-                        MainApp(viewModel)
+                        MainApp(viewModel, user)
                     }
 
                 }
