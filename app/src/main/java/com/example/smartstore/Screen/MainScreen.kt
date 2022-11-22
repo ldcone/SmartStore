@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,16 +27,17 @@ import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.HOME
 import com.example.smartstore.viewmodel.MYPAGE
+import com.example.smartstore.viewmodel.MainViewModel
 import com.example.smartstore.viewmodel.ORDER
 
 @Composable
-fun MainApp(){
+fun MainApp(viewModel: MainViewModel){
     val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomNavigation(navController = navController)}
     ) { innerPadding->
         Box(Modifier.padding(innerPadding)){
-            NavigationGraph(navController = navController)
+            NavigationGraph(navController = navController, viewModel = viewModel)
         }
     }
 }
@@ -95,7 +97,7 @@ sealed class BottomNavItem(
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController){
+fun NavigationGraph(navController: NavHostController,viewModel: MainViewModel){
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.screenRoute
@@ -104,7 +106,7 @@ fun NavigationGraph(navController: NavHostController){
             HomeScreen()
         }
         composable(BottomNavItem.Order.screenRoute){
-            OrderScreen()
+            OrderScreen(viewModel = viewModel)
         }
         composable(BottomNavItem.MyPage.screenRoute){
             MyPageScreen()
@@ -116,6 +118,6 @@ fun NavigationGraph(navController: NavHostController){
 @Composable
 fun DefaultPreview() {
     SmartStoreTheme {
-        MainApp()
+        MainApp(viewModel())
     }
 }
