@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +36,7 @@ fun MainApp(viewModel: MainViewModel){
         bottomBar = { BottomNavigation(navController = navController)}
     ) { innerPadding->
         Box(Modifier.padding(innerPadding)){
-            NavigationGraph(navController = navController, viewModel = viewModel)
+            NavigationGraph(navController = navController, viewModel)
         }
     }
 }
@@ -97,7 +96,7 @@ sealed class BottomNavItem(
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController,viewModel: MainViewModel){
+fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel){
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.screenRoute

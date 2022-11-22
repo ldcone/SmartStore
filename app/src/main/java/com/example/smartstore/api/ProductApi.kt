@@ -1,4 +1,4 @@
-package com.example.smartstore.service
+package com.ssafy.smartstore.api
 
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ProductApi {
-    @GET("product")
+    @GET("rest/product")
     suspend fun getProductList():List<Product>
 
     // {productId}에 해당하는 상품의 정보를 comment와 함께 반환한다.

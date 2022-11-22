@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import com.example.smartstore.Screen.LoginApp
 import com.example.smartstore.ui.theme.SmartStoreTheme
+import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,8 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    LoginApp()
+                    val user = ApplicationClass.sharedPreferencesUtil.getUser()
+                    LoginApp(user)
                 }
             }
         }

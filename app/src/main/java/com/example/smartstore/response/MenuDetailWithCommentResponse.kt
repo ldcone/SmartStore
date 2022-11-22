@@ -1,4 +1,4 @@
-package com.example.smartstore.response
+package com.ssafy.smartstore.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,7 +11,7 @@ data class MenuDetailWithCommentResponse (
     @SerializedName("name") val productName: String,
     @SerializedName("rating") val productRating: Double,
     @SerializedName("commentId") val commentId: Int = -1,
-    @SerializedName("comment") var commentContent: String?,
+    @SerializedName("comment") val commentContent: String?,
     @SerializedName("userName") val commentUserName: String?,
     @SerializedName("commentCnt") val productCommentTotalCnt: Int,
     @SerializedName("type") val type: String

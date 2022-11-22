@@ -1,7 +1,8 @@
-package com.example.smartstore.util
+package com.ssafy.smartstore.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.ssafy.smartstore.dto.User
 
 class SharedPreferencesUtil (context: Context) {
     val SHARED_PREFERENCES_NAME = "smartstore_preference"
@@ -10,23 +11,23 @@ class SharedPreferencesUtil (context: Context) {
     var preferences: SharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-//    //사용자 정보 저장
-//    fun addUser(user:User){
-//        val editor = preferences.edit()
-//        editor.putString("id", user.id)
-//        editor.putString("name", user.name)
-//        editor.apply()
-//    }
-//
-//    fun getUser(): User{
-//        val id = preferences.getString("id", "")
-//        if (id != ""){
-//            val name = preferences.getString("name", "")
-//            return User(id!!, name!!, "",0)
-//        }else{
-//            return User()
-//        }
-//    }
+    //사용자 정보 저장
+    fun addUser(user:User){
+        val editor = preferences.edit()
+        editor.putString("id", user.id)
+        editor.putString("name", user.name)
+        editor.apply()
+    }
+
+    fun getUser(): User{
+        val id = preferences.getString("id", "")
+        if (id != ""){
+            val name = preferences.getString("name", "")
+            return User(id!!, name!!, "",0)
+        }else{
+            return User()
+        }
+    }
 
     fun deleteUser(){
         //preference 지우기
