@@ -105,7 +105,7 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel){
             HomeScreen()
         }
         composable(BottomNavItem.Order.screenRoute){
-            OrderScreen(viewModel = viewModel)
+            OrderApp(viewModel = viewModel)
         }
         composable(BottomNavItem.MyPage.screenRoute){
             MyPageScreen()
