@@ -41,6 +41,7 @@ class MainViewModel():ViewModel() {
         getProductList()
         getRecentOrderList(user.id)
 //        ShoppingCart.value = mutableListOf()
+        getUserInfo(user.id)
 
     }
     fun getShoppingCart():MutableLiveData<MutableList<ShoppingCart>>{
@@ -133,12 +134,13 @@ class MainViewModel():ViewModel() {
 
     // 회원정보 데이터 뽑아내기
     fun getUserInfoData(userInfo:HashMap<String, Any>){
+        Log.d(TAG, "userInfo: ${userInfo}")
 //        val orderList:List<Order> = userInfo.get("order") as List<Order>
         val grade:Grade = Gson().fromJson(userInfo.get("grade").toString(), Grade::class.java)
-        Log.d(TAG, "getUserInfoData: ${grade}")
-        //val user:UserResponse = Gson().fromJson(userInfo.get("user").toString(), UserResponse::class.java)
-//        Log.d(TAG, "getUserInfoData: ${orderList}")
-        Log.d(TAG, "getUserInfoData: ${user}")
+        Log.d(TAG, "gradeData: ${grade}")
+        Log.d(TAG, "getUserInfoData: ${userInfo.get("user").toString()}")
+        val user = Gson().fromJson(userInfo.get("user").toString(), Any::class.java)
+        Log.d(TAG, "userData: ${user}")
         if(grade == null){
             gradeInfo = MutableLiveData<Grade>()
         }else{
