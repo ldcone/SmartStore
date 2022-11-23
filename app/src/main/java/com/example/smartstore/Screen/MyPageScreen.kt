@@ -1,30 +1,35 @@
 package com.example.smartstore.Screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
 import com.example.smartstore.R
 import com.example.smartstore.ui.theme.CaffeBrown
@@ -33,17 +38,58 @@ import com.example.smartstore.ui.theme.CaffeMenuBack
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
 import com.skydoves.landscapist.glide.GlideImage
-import com.ssafy.smartstore.dto.Order
 import com.ssafy.smartstore.dto.User
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.CommonUtils
 
 private const val TAG = "MyPageScreen_싸피"
+
+enum class MyPageScreens(){
+    MyPageScreen,
+    MyOrderDetailScreen,
+}
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun MyPageApp(
+    user:User,
+    viewModel:MainViewModel
+){
+    val context = LocalContext.current
+    val navController = rememberNavController()
+    Scaffold{
+        NavHost(
+            navController = navController,
+            startDestination = MyPageScreens.MyPageScreen.name,
+        ){
+            composable(route = MyPageScreens.MyPageScreen.name){
+                MyPageScreen(
+                    user,
+                    viewModel,
+                    onOrderItemClicked = {
+                        viewModel.Order = it
+                        navController.navigate(MyPageScreens.MyOrderDetailScreen.name)
+                    },
+                    onLogOutClicked = {
+                        viewModel.logout(context)
+                    }
+                )
+            }
+            composable(route = MyPageScreens.MyOrderDetailScreen.name){
+                MyOrderDetailScreen(viewModel)
+            }
+        }
+    }
+}
+
 @Composable
 fun MyPageScreen(
     user: User,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onOrderItemClicked:(LatestOrderResponse)->Unit,
+    onLogOutClicked:()->Unit
 ){
+    val grade = viewModel.gradeInfo
     val orderList by viewModel.allRecentOrder.observeAsState(listOf())
     Column(
         modifier = Modifier
@@ -78,7 +124,11 @@ fun MyPageScreen(
                 Modifier
                     .weight(1.0f)
                     .width(40.dp)
-                    .height(40.dp))
+                    .height(40.dp)
+                    .clickable {
+                        onLogOutClicked()
+                    }
+            )
         }
         Column(
             Modifier.fillMaxWidth()
@@ -88,37 +138,42 @@ fun MyPageScreen(
                 modifier = Modifier.fillMaxWidth()
             ){
                 GlideImage(
-                    imageModel = "${ApplicationClass.GRADE_IMGS_URL}${"seeds.png"}",
+                    imageModel = "${ApplicationClass.GRADE_IMGS_URL}${grade!!.img}",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .weight(0.5f)
                         .width(24.dp)
                         .height(24.dp)
                 )
-//                Image(painter = painterResource(id = R.drawable.logout),
-//                    contentDescription = null,
-//                    Modifier
-//                        .weight(0.5f)
-//                        .width(24.dp)
-//                        .height(24.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("씨앗 2단계", style = MaterialTheme.typography.h4,
-                        modifier = Modifier.weight(2.0f))
+                Text("${grade!!.title} ${grade!!.step}단계", style = MaterialTheme.typography.h4)
                 Spacer(Modifier.width(4.dp))
                 LinearProgressIndicator(
-                    progress = 0.1f,
+                    progress = when(grade!!.title){
+                                    "씨앗" -> ((10 - grade!!.to).toFloat() / 10)
+                                    "꽃" -> ((15 - (grade!!.to)).toFloat() / 15)
+                                    "열매" -> ((20 - (grade!!.to)).toFloat() / 20)
+                                    "커피콩" -> ((25 - (grade!!.to).toFloat() / 25))
+                                    else -> 1.0f
+                               },
                     backgroundColor = Color.LightGray,
                     color = CaffeBrown,
                     modifier = Modifier
-                        .width(100.dp)
-                        .weight(3.0f)
+                        .fillMaxWidth(0.8f)
                 )
-                Spacer(Modifier.width(8.dp))
-                Text("1/10", style = TextStyle(fontSize = 12.sp),
-                    modifier = Modifier.weight(0.5f))
+                Spacer(Modifier.width(4.dp))
+                Text(when(grade!!.title){
+                        "씨앗" -> "${10 - grade!!.to} / 10"
+                        "꽃" -> "${15 - grade!!.to} / 15"
+                        "열매" -> "${20 - grade!!.to} / 20"
+                        "커피콩" -> "${25 - grade!!.to} / 25"
+                        else -> ""
+                    },
+                    style = TextStyle(fontSize = 12.sp, textAlign = TextAlign.Center),
+                    modifier = Modifier
+                        .fillMaxWidth())
             }
             Spacer(Modifier.height(4.dp))
-            Text("다음 레벨까지 9잔 남았습니다.",
+            Text("다음 레벨까지 ${grade!!.to}잔 남았습니다.",
                 style = TextStyle(color = Color.Gray, fontSize = 15.sp))
         }
         Image(painter = painterResource(id = R.drawable.space),
@@ -129,12 +184,12 @@ fun MyPageScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text("주문내역", style = MaterialTheme.typography.h3)
         Spacer(modifier = Modifier.height(16.dp))
-        OrderListLayout(orderList)
+        OrderListLayout(orderList, onOrderItemClicked)
     }
 }
 
 @Composable
-fun OrderListLayout(list:List<LatestOrderResponse>){
+fun OrderListLayout(list:List<LatestOrderResponse>, onItemClicked: (LatestOrderResponse) -> Unit){
     Box (
         modifier = Modifier
             .fillMaxWidth()
@@ -143,7 +198,7 @@ fun OrderListLayout(list:List<LatestOrderResponse>){
         LazyRow{
             if(list != null){
                 items(list.size){
-                    RecentGridItem(item = list[it])
+                    OrderGridItem(item = list[it], onItemClicked)
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }else{
@@ -154,7 +209,7 @@ fun OrderListLayout(list:List<LatestOrderResponse>){
 }
 
 @Composable
-fun OrderGridItem(item:LatestOrderResponse){
+fun OrderGridItem(item:LatestOrderResponse, onItemClicked:(LatestOrderResponse)->Unit){
     Card(
         Modifier
             .width(180.dp)
@@ -164,6 +219,9 @@ fun OrderGridItem(item:LatestOrderResponse){
                 color = CaffeDarkBrown,
                 shape = MaterialTheme.shapes.large
             )
+            .clickable {
+                onItemClicked(item)
+            }
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -201,6 +259,6 @@ fun OrderGridItem(item:LatestOrderResponse){
 @Composable
 fun MyPagePreview(){
     SmartStoreTheme {
-        MyPageScreen(User("","김싸피","",0), viewModel = viewModel())
+        MyPageApp(User("","김싸피","",0), viewModel = viewModel())
     }
 }

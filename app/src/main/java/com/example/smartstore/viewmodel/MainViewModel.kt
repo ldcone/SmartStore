@@ -1,23 +1,18 @@
 package com.example.smartstore.viewmodel
 
+import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bumptech.glide.Glide.init
 import com.example.smartstore.ApplicationClass
-import com.ssafy.smartstore.dto.OrderDetail
+import com.example.smartstore.MainActivity
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
-import com.ssafy.smartstore.dto.UserOrderDetail
-import com.example.smartstore.response.UserResponse
 import com.google.gson.Gson
 import com.ssafy.smartstore.dto.*
 import com.ssafy.smartstore.response.LatestOrderResponse
-import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.IOException
 
 const val HOME = "home"
@@ -30,14 +25,15 @@ class MainViewModel():ViewModel() {
     private val _ShoppingCart=MutableLiveData<MutableList<ShoppingCart>>(mutableListOf())
     val user = ApplicationClass.sharedPreferencesUtil.getUser()
     var Product:Product?=null
+    var Order:LatestOrderResponse?=null
 
     var allRecentOrder: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData<List<LatestOrderResponse>>()
 
 //    val _ShoppingCart = mutableStateListOf<ShoppingCart>()
 //    val shoppingCart:MutableList<ShoppingCart> = _ShoppingCart
     var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
-    var gradeInfo:MutableLiveData<Grade> = MutableLiveData<Grade>()
-    var userInfo:MutableLiveData<UserResponse> = MutableLiveData<UserResponse>()
+    var gradeInfo:Grade? = null
+    var userInfo:User? = null
 
     init {
         getProductList()
@@ -138,21 +134,22 @@ class MainViewModel():ViewModel() {
     // 회원정보 데이터 뽑아내기
     fun getUserInfoData(userInfo:HashMap<String, Any>){
         Log.d(TAG, "userInfo: ${userInfo}")
-//        val orderList:List<Order> = userInfo.get("order") as List<Order>
+
         val grade:Grade = Gson().fromJson(userInfo.get("grade").toString(), Grade::class.java)
-        Log.d(TAG, "gradeData: ${grade}")
-        Log.d(TAG, "getUserInfoData: ${userInfo.get("user").toString()}")
-        val user = Gson().fromJson(userInfo.get("user").toString(), Any::class.java)
-        Log.d(TAG, "userData: ${user}")
-        if(grade == null){
-            gradeInfo = MutableLiveData<Grade>()
-        }else{
-            gradeInfo.value = grade
-        }
-        if(user != null){
-            this.userInfo = MutableLiveData<UserResponse>()
-        }else{
-            this.userInfo.value = user
-        }
+
+        var strUser = userInfo.get("user").toString()
+        strUser = strUser.replace("=","=\"")
+        strUser = strUser.replace(",","\",")
+        strUser = strUser.replace("=\"[","=[")
+
+        val user:User = Gson().fromJson(strUser, User::class.java)
+
+        gradeInfo = grade
+        this.userInfo = user
+    }
+
+    fun logout(context: Context){
+        ApplicationClass.sharedPreferencesUtil.deleteUser()
+        (context as MainActivity).finish()
     }
 }
