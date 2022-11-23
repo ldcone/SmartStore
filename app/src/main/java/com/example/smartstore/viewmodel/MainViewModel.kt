@@ -1,10 +1,15 @@
 package com.example.smartstore.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide.init
 import com.example.smartstore.ApplicationClass
+import com.ssafy.smartstore.dto.OrderDetail
+import com.ssafy.smartstore.dto.Product
+import com.ssafy.smartstore.dto.ShoppingCart
+import com.ssafy.smartstore.dto.UserOrderDetail
 import com.example.smartstore.response.UserResponse
 import com.google.gson.Gson
 import com.ssafy.smartstore.dto.*
@@ -12,6 +17,7 @@ import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.IOException
 
 const val HOME = "home"
@@ -24,6 +30,9 @@ class MainViewModel():ViewModel() {
     var Product:Product?=null
     var allProduct: MutableLiveData<List<Product>> = MutableLiveData<List<Product>>()
     var allRecentOrder: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData<List<LatestOrderResponse>>()
+    private val _ShoppingCart=MutableLiveData<MutableList<ShoppingCart>>(mutableListOf())
+//    val _ShoppingCart = mutableStateListOf<ShoppingCart>()
+//    val shoppingCart:MutableList<ShoppingCart> = _ShoppingCart
     var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
     var gradeInfo:MutableLiveData<Grade> = MutableLiveData<Grade>()
     var userInfo:MutableLiveData<UserResponse> = MutableLiveData<UserResponse>()
@@ -31,10 +40,22 @@ class MainViewModel():ViewModel() {
     init {
         getProductList()
         getRecentOrderList(user.id)
+//        ShoppingCart.value = mutableListOf()
+
+    }
+    fun getShoppingCart():MutableLiveData<MutableList<ShoppingCart>>{
+        val temp = _ShoppingCart
+        return temp
+    }
+    fun addShop(item:ShoppingCart){
+        _ShoppingCart.value = _ShoppingCart.value?.plus(listOf(item)) as MutableList<ShoppingCart>?
+    }
+    fun removeShop(index:ShoppingCart){
+        _ShoppingCart.value = _ShoppingCart.value?.filter { it != index }?.toMutableList()
         getUserInfo(user.id)
     }
 
-    fun getProductList(){
+    private fun getProductList(){
         CoroutineScope(Dispatchers.Main).launch {
             val result = RetrofitUtil.productService.getProductList()
             Log.d("main","$result")
@@ -86,7 +107,7 @@ class MainViewModel():ViewModel() {
             }
         }
     }
-    
+
     // 최근 주문 아이템 데이터 생성하기
     fun makeRecentItemData(responseList:List<LatestOrderResponse>):List<LatestOrderResponse>{
         val totalList = mutableListOf<LatestOrderResponse>()

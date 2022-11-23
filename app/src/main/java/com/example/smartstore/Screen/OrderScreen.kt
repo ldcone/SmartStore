@@ -18,7 +18,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -41,10 +41,12 @@ import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
 import com.skydoves.landscapist.glide.GlideImage
 import com.ssafy.smartstore.dto.Product
+import com.ssafy.smartstore.dto.ShoppingCart
 
 enum class OrderScreen(){
     OrderScreen,
-    OrderDetailScreen
+    OrderDetailScreen,
+    ShoppingCartScreen
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -59,14 +61,26 @@ fun OrderApp(viewModel: MainViewModel){
             composable(route = OrderScreen.OrderScreen.name){
                 OrderScreen(
                     viewModel,
-                    onItemClicked = {
+                    toDetail = {
                         viewModel.Product = it
                         navController.navigate(OrderScreen.OrderDetailScreen.name)
+                    },
+                    toShoppingCart={
+                        navController.navigate(OrderScreen.ShoppingCartScreen.name)
                     }
                 )
             }
             composable(route = OrderScreen.OrderDetailScreen.name){
-                OrderDetailScreen(viewModel = viewModel )
+                OrderDetailScreen(viewModel = viewModel,
+                    onItemClick = {
+                        navController.popBackStack(OrderScreen.OrderScreen.name, inclusive = false)
+                    })
+            }
+            composable(route = OrderScreen.ShoppingCartScreen.name){
+                ShoppingCartScreen(viewModel = viewModel,
+                    onItemClicked ={
+                        navController.popBackStack(OrderScreen.OrderScreen.name, inclusive = false)
+                    } )
             }
         }
     }
@@ -77,10 +91,11 @@ fun OrderApp(viewModel: MainViewModel){
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
- fun OrderScreen(viewModel: MainViewModel, onItemClicked:(Product)->(Unit)){
+ fun OrderScreen(viewModel: MainViewModel, toDetail:(Product)->(Unit),toShoppingCart: ()->(Unit)){
     val navController = rememberNavController()
-    val prodlist = viewModel.allProduct.value
-    Log.d("orderScreen","$prodlist")
+//    val prodlist = viewModel.allProduct
+    val prodlist2 by viewModel.allProduct.observeAsState(listOf())
+    Log.d("orderScreen","$prodlist2")
 //    val item = viewModel.allProduct
     Column(
         modifier = Modifier
@@ -117,8 +132,8 @@ fun OrderApp(viewModel: MainViewModel){
             color = Color.Red,
             fontSize = 28.sp,
         )
-        Grid(prodlist = prodlist,viewModel,onItemClicked)
-        FloatingActionButton()
+        Grid(prodlist = prodlist2,viewModel,toDetail)
+        FloatingActionButton(toShoppingCart)
     }
 }
 
@@ -178,7 +193,7 @@ fun Grid(prodlist : List<Product>?,viewModel: MainViewModel,onItemClicked: (Prod
 }
 
 @Composable
-fun FloatingActionButton(){
+fun FloatingActionButton(onItemClicked: () -> Unit){
     val ctx = LocalContext.current
     Column(
         modifier = Modifier
@@ -190,7 +205,7 @@ fun FloatingActionButton(){
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(
-            onClick = {},
+            onClick = {onItemClicked()},
             shape = CircleShape,
             backgroundColor = Color.Yellow,
             contentColor = Color.Black
@@ -204,6 +219,6 @@ fun FloatingActionButton(){
 @Composable
 fun OrderPreview(){
     SmartStoreTheme {
-        OrderScreen(viewModel(),{})
+//        OrderScreen(viewModel(),{})
     }
 }

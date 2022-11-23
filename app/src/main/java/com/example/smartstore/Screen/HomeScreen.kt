@@ -116,10 +116,10 @@ fun RecentGridItem(item:LatestOrderResponse){
         ) {
             Box(
                 Modifier
-                 .clip(MaterialTheme.shapes.large)
-                 .width(100.dp)
-                 .height(100.dp)
-                 .background(CaffeMenuBack),
+                    .clip(MaterialTheme.shapes.large)
+                    .width(100.dp)
+                    .height(100.dp)
+                    .background(CaffeMenuBack),
                 contentAlignment = Alignment.Center
             ){
                 GlideImage(
