@@ -11,7 +11,7 @@ interface UserApi {
     suspend fun insert(@Body body: User): Response<Boolean>
 
     // 사용자의 정보와 함께 사용자의 주문 내역, 사용자 등급 정보를 반환한다.
-    @POST("rest/user/info")
+    @GET("rest/user/info")
     suspend fun getInfo(@Query("id") id: String): Response<HashMap<String, Any>>
 
     // request parameter로 전달된 id가 이미 사용중인지 반환한다.

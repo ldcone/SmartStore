@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide.init
 import com.example.smartstore.ApplicationClass
 import com.ssafy.smartstore.dto.OrderDetail
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstore.dto.UserOrderDetail
+import com.example.smartstore.response.UserResponse
+import com.google.gson.Gson
+import com.ssafy.smartstore.dto.*
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
@@ -29,6 +33,10 @@ class MainViewModel():ViewModel() {
     private val _ShoppingCart=MutableLiveData<MutableList<ShoppingCart>>(mutableListOf())
 //    val _ShoppingCart = mutableStateListOf<ShoppingCart>()
 //    val shoppingCart:MutableList<ShoppingCart> = _ShoppingCart
+    var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
+    var gradeInfo:MutableLiveData<Grade> = MutableLiveData<Grade>()
+    var userInfo:MutableLiveData<UserResponse> = MutableLiveData<UserResponse>()
+
     init {
         getProductList()
         getRecentOrderList(user.id)
@@ -44,6 +52,7 @@ class MainViewModel():ViewModel() {
     }
     fun removeShop(index:ShoppingCart){
         _ShoppingCart.value = _ShoppingCart.value?.filter { it != index }?.toMutableList()
+        getUserInfo(user.id)
     }
 
     private fun getProductList(){
@@ -76,7 +85,29 @@ class MainViewModel():ViewModel() {
             }
         }
     }
-    
+
+    fun getUserInfo(id:String){
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val result = RetrofitUtil.userService.getInfo(id)
+                Log.d("userInfo", "${id} : ${result.code()}, ${result.body()}")
+
+                if(result.code() == 200){
+                    if(result.body() == null || result.body()!!.size == 0){
+                        allUserInfo = MutableLiveData<HashMap<String, Any>>()
+                    }else{
+                        allUserInfo.value = result.body()
+                        getUserInfoData(allUserInfo.value!!)
+                    }
+                }else{
+                    allUserInfo = MutableLiveData<HashMap<String, Any>>()
+                }
+            }catch(e:IOException){
+                Log.d(TAG, "userInfo: ${e.message}")
+            }
+        }
+    }
+
     // 최근 주문 아이템 데이터 생성하기
     fun makeRecentItemData(responseList:List<LatestOrderResponse>):List<LatestOrderResponse>{
         val totalList = mutableListOf<LatestOrderResponse>()
@@ -98,5 +129,25 @@ class MainViewModel():ViewModel() {
         }
         
         return totalList
+    }
+
+    // 회원정보 데이터 뽑아내기
+    fun getUserInfoData(userInfo:HashMap<String, Any>){
+//        val orderList:List<Order> = userInfo.get("order") as List<Order>
+        val grade:Grade = Gson().fromJson(userInfo.get("grade").toString(), Grade::class.java)
+        Log.d(TAG, "getUserInfoData: ${grade}")
+        //val user:UserResponse = Gson().fromJson(userInfo.get("user").toString(), UserResponse::class.java)
+//        Log.d(TAG, "getUserInfoData: ${orderList}")
+        Log.d(TAG, "getUserInfoData: ${user}")
+        if(grade == null){
+            gradeInfo = MutableLiveData<Grade>()
+        }else{
+            gradeInfo.value = grade
+        }
+        if(user != null){
+            this.userInfo = MutableLiveData<UserResponse>()
+        }else{
+            this.userInfo.value = user
+        }
     }
 }

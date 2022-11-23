@@ -48,6 +48,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
     ),
+    h5 = TextStyle(
+        fontFamily = ElandChoiceface,
+        fontWeight = FontWeight.Bold,
+        fontSize = 15.sp
+    ),
     body1 = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Normal,
