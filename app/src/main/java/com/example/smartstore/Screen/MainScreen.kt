@@ -28,15 +28,16 @@ import com.example.smartstore.viewmodel.HOME
 import com.example.smartstore.viewmodel.MYPAGE
 import com.example.smartstore.viewmodel.MainViewModel
 import com.example.smartstore.viewmodel.ORDER
+import com.ssafy.smartstore.dto.User
 
 @Composable
-fun MainApp(viewModel: MainViewModel){
+fun MainApp(viewModel: MainViewModel, user: User){
     val navController = rememberNavController()
     Scaffold(
         bottomBar = { BottomNavigation(navController = navController)}
     ) { innerPadding->
         Box(Modifier.padding(innerPadding)){
-            NavigationGraph(navController = navController, viewModel)
+            NavigationGraph(navController = navController, viewModel, user)
         }
     }
 }
@@ -96,13 +97,13 @@ sealed class BottomNavItem(
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel){
+fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel, user:User){
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Home.screenRoute
     ){
         composable(BottomNavItem.Home.screenRoute){
-            HomeScreen()
+            HomeScreen(user, viewModel)
         }
         composable(BottomNavItem.Order.screenRoute){
             OrderApp(viewModel = viewModel)
@@ -117,6 +118,6 @@ fun NavigationGraph(navController: NavHostController, viewModel: MainViewModel){
 @Composable
 fun DefaultPreview() {
     SmartStoreTheme {
-        MainApp(viewModel())
+        MainApp(viewModel(),User("test","","유저01",0))
     }
 }

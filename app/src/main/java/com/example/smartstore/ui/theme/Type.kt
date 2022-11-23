@@ -43,15 +43,27 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 25.sp
     ),
+    h4 = TextStyle(
+        fontFamily = ElandChoiceface,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    ),
     body1 = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontSize = 20.sp,
+        color = CaffeDarkBrown
     ),
     button = TextStyle(
         fontFamily = ElandChoiceface,
         fontWeight = FontWeight.Bold,
         fontSize = 15.sp,
         color = Color.White
+    ),
+    subtitle1 = TextStyle(
+        fontFamily = ElandChoiceface,
+        fontWeight = FontWeight.Bold,
+        fontSize = 13.sp,
+        color = CaffeDarkBrown
     )
 )

@@ -5,11 +5,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
     background = CaffeLightWhite,
-    surface = CaffeMenuBack,
-    onSurface = CaffeMenuBack,
+    surface = Color.White,
+    onSurface = Color.White,
     primary = CaffeBrownLight,
     primaryVariant = CaffeBrown,
     secondary = CaffeDarkBrown
@@ -17,8 +18,8 @@ private val DarkColorPalette = darkColors(
 
 private val LightColorPalette = lightColors(
     background = CaffeLightWhite,
-    surface = CaffeMenuBack,
-    onSurface = CaffeMenuBack,
+    surface = Color.White,
+    onSurface = Color.White,
     primary = CaffeBrownLight,
     primaryVariant = CaffeBrown,
     secondary = CaffeDarkBrown

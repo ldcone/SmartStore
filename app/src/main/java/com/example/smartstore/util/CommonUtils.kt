@@ -20,6 +20,11 @@ object CommonUtils {
         return dateFormat.format(date)
     }
 
+    fun getFormattedItemDate(date:Date): String{
+        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA)
+        return dateFormat.format(date)
+    }
+
     // 시간 계산을 통해 완성된 제품인지 확인
 //    fun isOrderCompleted(orderDetail: OrderDetailResponse): String {
 //        return if( checkTime(orderDetail.orderDate.time))  "주문완료" else "진행 중.."
