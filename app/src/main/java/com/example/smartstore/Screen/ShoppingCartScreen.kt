@@ -2,6 +2,7 @@ package com.example.smartstore.Screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,10 +39,13 @@ import com.example.smartstore.ui.theme.CaffeMenuBack
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
 import com.skydoves.landscapist.glide.GlideImage
+import com.ssafy.smartstore.dto.Order
+import com.ssafy.smartstore.dto.OrderDetail
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.CommonUtils
+import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 @SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState",
     "UnrememberedMutableState"
@@ -97,6 +101,31 @@ import com.ssafy.smartstore.util.CommonUtils
     }
 }
 
+//private fun makeOrderData(): Order {
+//    val userId = SharedPreferencesUtil(requireContext()).getUser().id
+//    val tableNum = activityViewModel.getTable_num()
+//    val listDetail = arrayListOf<OrderDetail>()
+//    val listShop = activityViewModel.getListShop()
+//
+//    // change ShippingCart to OrderDetail
+//    for(item in listShop){
+//        listDetail.add(OrderDetail(item.menuId, item.menuCnt))
+//    }
+//
+//    return Order(0, userId, tableNum.toString(),
+//        null, "N", listDetail)
+//}
+
+//private fun completedOrder(){
+//    if(activityViewModel.getTotalCnt() == 0){
+//        Toast.makeText(context,"담겨있는 상품이 없습니다.", Toast.LENGTH_SHORT).show()
+//    }else{
+//        Log.d(TAG,activityViewModel.getTable_num().toString())
+//        val order = makeOrderData()
+//        Log.d(TAG, "completedOrder: $order")
+//        OrderService().registOrder(order, ShoppingListCallback())
+//    }
+//}
 
 @Composable
 fun ShopGridLayout(list:State<MutableList<ShoppingCart>>?,viewModel: MainViewModel){
