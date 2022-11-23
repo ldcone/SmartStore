@@ -15,6 +15,7 @@ class ApplicationClass: Application() {
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
         const val SERVER_URL = "http://3.35.218.206:8080/"
         const val MENU_IMGS_URL = "${SERVER_URL}imgs/menu/"
+        const val GRADE_IMGS_URL = "${SERVER_URL}imgs/grade/"
 //        var userInfo:UserDTO? = null
 
         // 사용자 정보 가져오기
