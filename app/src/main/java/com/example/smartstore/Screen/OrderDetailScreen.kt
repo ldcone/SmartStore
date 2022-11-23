@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -121,7 +122,7 @@ import com.example.smartstore.ui.theme.*
                     .height(32.dp)
             ) {
                 Icon(
-                    Icons.Filled.Close,
+                    Icons.Filled.Remove,
                     contentDescription = null,
                     Modifier
                         .fillMaxWidth()
