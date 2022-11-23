@@ -1,6 +1,7 @@
 package com.example.smartstore.Screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -45,6 +46,7 @@ import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.CommonUtils
+import com.ssafy.smartstore.util.RetrofitUtil
 import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 @SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState",
@@ -55,10 +57,11 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
  fun ShoppingCartScreen( viewModel: MainViewModel,onItemClicked:(Product)->(Unit)){
 
     val shopList = viewModel.getShoppingCart().observeAsState(mutableListOf())
-
-//    val tempList = remember {
-//        mutableStateOf<MutableList<ShoppingCart>>(shopList)
-//    }
+    val mContext = LocalContext.current
+    var price =0
+    for(item in shopList?.value!!){
+        price+=item.totalPrice
+    }
     Log.d("shop","${shopList}")
     Column(
         modifier = Modifier
@@ -89,8 +92,20 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
                 Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
+                    .weight(7f)
             ){
                 ShopGridLayout(list= shopList,viewModel )
+            }
+            Row(Modifier.weight(1f),
+                horizontalArrangement = Arrangement.SpaceBetween){
+                Text(text = "총 ${shopList.value.size}개")
+                Text(text= "${price}원")
+            }
+            Button(onClick = {
+                makeOrderData(viewModel = viewModel, list =shopList,mContext )
+                             },
+            Modifier.weight(1f)) {
+                Text("주문")
             }
 
 
@@ -101,31 +116,29 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
     }
 }
 
-//private fun makeOrderData(): Order {
+private fun makeOrderData(viewModel: MainViewModel,list:State<MutableList<ShoppingCart>>?,mContext: Context){
 //    val userId = SharedPreferencesUtil(requireContext()).getUser().id
-//    val tableNum = activityViewModel.getTable_num()
-//    val listDetail = arrayListOf<OrderDetail>()
-//    val listShop = activityViewModel.getListShop()
-//
-//    // change ShippingCart to OrderDetail
-//    for(item in listShop){
-//        listDetail.add(OrderDetail(item.menuId, item.menuCnt))
-//    }
-//
-//    return Order(0, userId, tableNum.toString(),
-//        null, "N", listDetail)
-//}
+    val userId = "id 01"
+    val tableNum = 0
+    val listDetail = arrayListOf<OrderDetail>()
 
-//private fun completedOrder(){
-//    if(activityViewModel.getTotalCnt() == 0){
-//        Toast.makeText(context,"담겨있는 상품이 없습니다.", Toast.LENGTH_SHORT).show()
-//    }else{
-//        Log.d(TAG,activityViewModel.getTable_num().toString())
-//        val order = makeOrderData()
-//        Log.d(TAG, "completedOrder: $order")
-//        OrderService().registOrder(order, ShoppingListCallback())
-//    }
-//}
+    // change ShippingCart to OrderDetail
+    for(item in list?.value!!){
+        listDetail.add(OrderDetail(item.menuId, item.menuCnt))
+    }
+     val order = Order(0, userId, tableNum.toString(),
+        null, "N", listDetail)
+    completedOrder(viewModel,order,mContext)
+}
+
+private fun completedOrder(viewModel: MainViewModel,order: Order,mContext: Context){
+    val temp = viewModel.getShoppingCart()
+    if(temp.value?.size== 0){
+        Toast.makeText(mContext,"담겨있는 상품이 없습니다.", Toast.LENGTH_SHORT).show()
+    }else{
+        viewModel.completeOrder(order)
+    }
+}
 
 @Composable
 fun ShopGridLayout(list:State<MutableList<ShoppingCart>>?,viewModel: MainViewModel){

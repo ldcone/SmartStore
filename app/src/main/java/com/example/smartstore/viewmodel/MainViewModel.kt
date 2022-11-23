@@ -43,7 +43,7 @@ class MainViewModel():ViewModel() {
         getProductList()
         getRecentOrderList(user.id)
 //        ShoppingCart.value = mutableListOf()
-        getUserInfo(user.id)
+//        getUserInfo(user.id)
 
     }
     private fun getProductList(){
@@ -63,7 +63,7 @@ class MainViewModel():ViewModel() {
     }
     fun removeShop(index:ShoppingCart){
         _ShoppingCart.value = _ShoppingCart.value?.filter { it != index }?.toMutableList()
-        getUserInfo(user.id)
+//        getUserInfo(user.id)
     }
 
 
@@ -153,6 +153,13 @@ class MainViewModel():ViewModel() {
             this.userInfo = MutableLiveData<UserResponse>()
         }else{
             this.userInfo.value = user
+        }
+    }
+
+    fun completeOrder(order: Order){
+        CoroutineScope(Dispatchers.IO).launch {
+            val orderId =RetrofitUtil.orderService.makeOrder(order)
+            Log.d("view_Order","$orderId")
         }
     }
 }

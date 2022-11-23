@@ -1,8 +1,10 @@
 package com.ssafy.smartstore.api
 
+import com.bumptech.glide.load.engine.Resource
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 

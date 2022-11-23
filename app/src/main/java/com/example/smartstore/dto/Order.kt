@@ -6,7 +6,7 @@ data class Order (
     var id: Int,
     var userId: String,
     var orderTable: String,
-    var orderTime: String,
+    var orderTime: String?,
     var complited: String,
     val details: ArrayList<OrderDetail> = ArrayList() ){
 
