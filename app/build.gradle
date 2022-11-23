@@ -72,4 +72,5 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:1.2.0"
     implementation "com.github.skydoves:landscapist-glide:1.4.7"
     implementation 'com.github.a914-gowtham:compose-ratingbar:1.2.4'
+    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
 }
