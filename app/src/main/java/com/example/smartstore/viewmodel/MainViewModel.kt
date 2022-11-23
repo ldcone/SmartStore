@@ -26,11 +26,13 @@ const val MYPAGE = "myPage"
 
 private const val TAG = "MainViewModel_싸피"
 class MainViewModel():ViewModel() {
+    var allProduct: MutableLiveData<List<Product>> = MutableLiveData<List<Product>>()
+    private val _ShoppingCart=MutableLiveData<MutableList<ShoppingCart>>(mutableListOf())
     val user = ApplicationClass.sharedPreferencesUtil.getUser()
     var Product:Product?=null
-    var allProduct: MutableLiveData<List<Product>> = MutableLiveData<List<Product>>()
+
     var allRecentOrder: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData<List<LatestOrderResponse>>()
-    private val _ShoppingCart=MutableLiveData<MutableList<ShoppingCart>>(mutableListOf())
+
 //    val _ShoppingCart = mutableStateListOf<ShoppingCart>()
 //    val shoppingCart:MutableList<ShoppingCart> = _ShoppingCart
     var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
@@ -40,8 +42,14 @@ class MainViewModel():ViewModel() {
     init {
         getProductList()
         getRecentOrderList(user.id)
-//        ShoppingCart.value = mutableListOf()
-
+    }
+    private fun getProductList(){
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = RetrofitUtil.productService.getProductList()
+            Log.d("main","$result")
+            if(result.isEmpty())allProduct=MutableLiveData<List<Product>>()
+            else allProduct.value = result
+        }
     }
     fun getShoppingCart():MutableLiveData<MutableList<ShoppingCart>>{
         val temp = _ShoppingCart
@@ -55,14 +63,7 @@ class MainViewModel():ViewModel() {
         getUserInfo(user.id)
     }
 
-    private fun getProductList(){
-        CoroutineScope(Dispatchers.Main).launch {
-            val result = RetrofitUtil.productService.getProductList()
-            Log.d("main","$result")
-            if(result.isEmpty())allProduct=MutableLiveData<List<Product>>()
-            else allProduct.value = result
-        }
-    }
+
 
     fun getRecentOrderList(id:String){
         CoroutineScope(Dispatchers.Main).launch {
