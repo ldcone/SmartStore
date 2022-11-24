@@ -39,7 +39,7 @@ class MainViewModel():ViewModel() {
         getProductList()
         getRecentOrderList(user.id)
 //        ShoppingCart.value = mutableListOf()
-//        getUserInfo(user.id)
+        getUserInfo(user.id)
 
     }
     private fun getProductList(){
@@ -146,11 +146,6 @@ class MainViewModel():ViewModel() {
 
         gradeInfo = grade
         this.userInfo = user
-    }
-
-    fun logout(context: Context){
-        ApplicationClass.sharedPreferencesUtil.deleteUser()
-        (context as MainActivity).finish()
     }
 
     fun completeOrder(order: Order){
