@@ -36,6 +36,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
+import com.example.smartstore.MainActivity
 import com.example.smartstore.R
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
@@ -46,13 +47,18 @@ import com.ssafy.smartstore.dto.ShoppingCart
 enum class OrderScreen(){
     OrderScreen,
     OrderDetailScreen,
-    ShoppingCartScreen
+    ShoppingCartScreen,
+    MapScreen
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun OrderApp(viewModel: MainViewModel){
     val navController = rememberNavController()
+    val mainActivity = LocalContext.current as MainActivity
+
+    mainActivity.getCurrentLocation()
+
     Scaffold {
         NavHost(
             navController = navController,
@@ -67,6 +73,9 @@ fun OrderApp(viewModel: MainViewModel){
                     },
                     toShoppingCart={
                         navController.navigate(OrderScreen.ShoppingCartScreen.name)
+                    },
+                    toMap={
+                        navController.navigate(OrderScreen.MapScreen.name)
                     }
                 )
             }
@@ -82,6 +91,13 @@ fun OrderApp(viewModel: MainViewModel){
                         navController.popBackStack(OrderScreen.OrderScreen.name, inclusive = false)
                     } )
             }
+            composable(route = OrderScreen.MapScreen.name){
+                MapScreen(viewModel = viewModel,
+//                    onItemClicked ={
+//                        navController.popBackStack(OrderScreen.OrderScreen.name, inclusive = false)
+//                    }
+                )
+            }
         }
     }
 }
@@ -91,10 +107,16 @@ fun OrderApp(viewModel: MainViewModel){
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
- fun OrderScreen(viewModel: MainViewModel, toDetail:(Product)->(Unit),toShoppingCart: ()->(Unit)){
+ fun OrderScreen(viewModel: MainViewModel,
+                 toDetail:(Product)->(Unit),
+                 toShoppingCart: ()->(Unit),
+                 toMap:() -> (Unit)
+){
     val navController = rememberNavController()
 //    val prodlist = viewModel.allProduct
     val prodlist2 by viewModel.allProduct.observeAsState(listOf())
+    val mainActivity = (LocalContext.current) as MainActivity
+    val distance by viewModel.distanceToCafe.observeAsState()
     Log.d("orderScreen","$prodlist2")
 //    val item = viewModel.allProduct
     Column(
@@ -104,25 +126,33 @@ fun OrderApp(viewModel: MainViewModel){
             .background(Color.White)
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(
                     top = 30.dp,
                     bottom = 30.dp
                 )
-                .align(Alignment.CenterHorizontally)
         ){
             Text(
-                "매장과의 거리가 350m 입니다.",
+                if(distance == null){
+                    "위치 정보를 불러오는 중입니다."
+                }else{
+                    "매장과의 거리가 ${distance?:0}m 입니다."
+                 },
                 fontSize = 23.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp)
             )
+            Spacer(Modifier.width(8.dp))
             Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "logo",
+                painter = painterResource(id = R.drawable.map),
+                contentDescription = "map",
                 modifier = Modifier
-                    .width(30.dp)
-                    .height(30.dp)
-                    .padding(start = 2.dp, bottom = 5.dp)
+                    .width(35.dp)
+                    .height(35.dp)
+                    .clickable {
+                        toMap()
+                    }
             )
         }
         Text(

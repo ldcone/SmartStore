@@ -1,9 +1,11 @@
 package com.example.smartstore.viewmodel
 
 import android.content.Context
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide.init
 import com.example.smartstore.ApplicationClass
 import com.example.smartstore.MainActivity
 import com.ssafy.smartstore.dto.Product
@@ -34,6 +36,16 @@ class MainViewModel():ViewModel() {
     var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
     var gradeInfo:Grade? = null
     var userInfo:User? = null
+
+    // 위치 정보 가져오기 위한 권한 승인여부
+    var needRequest = false
+    private var currentLocation = Location("current")
+    var cafeLocation = Location("cafe").apply {
+        latitude = 36.1079753
+        longitude = 128.418512
+    }
+    // 현재 위치 ~ 카페 간 거리
+    var distanceToCafe:MutableLiveData<Int> = MutableLiveData<Int>()
 
     init {
         getProductList()
@@ -153,5 +165,20 @@ class MainViewModel():ViewModel() {
             val orderId =RetrofitUtil.orderService.makeOrder(order)
             Log.d("view_Order","$orderId")
         }
+    }
+
+    // 현재 위치 좌표 설정하기
+    fun setCurrentLocation(latitude:Double, longitude:Double){
+        currentLocation.latitude = latitude
+        currentLocation.longitude = longitude
+    }
+
+    // 현재 위치와 카페 간 거리 구하기
+    fun getDistanceByCafe(){
+        val distance = currentLocation.distanceTo(cafeLocation).toInt()
+        Log.d(TAG, "getDistanceByCafe 현재 위치 : ${currentLocation.latitude} / ${currentLocation.longitude}")
+        Log.d(TAG, "getDistanceByCafe 카페 위치: ${cafeLocation.latitude} / ${cafeLocation.longitude}")
+        Log.d(TAG, "getDistanceByCafe 거리 : ${distance}m")
+        distanceToCafe.value = distance
     }
 }
