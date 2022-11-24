@@ -132,6 +132,5 @@ fun OrderDetailItem(item:OrderDetailResponse){
 @Preview
 @Composable
 fun MyOrderDetailPreview(){
-    //OrderDetailItem()
     MyOrderDetailScreen(viewModel())
 }

@@ -11,6 +11,7 @@ import com.ssafy.smartstore.dto.ShoppingCart
 import com.google.gson.Gson
 import com.ssafy.smartstore.dto.*
 import com.ssafy.smartstore.response.LatestOrderResponse
+import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -26,22 +27,20 @@ class MainViewModel():ViewModel() {
     val user = ApplicationClass.sharedPreferencesUtil.getUser()
     var Product:Product?=null
     var Order:LatestOrderResponse?=null
-
     var allRecentOrder: MutableLiveData<List<LatestOrderResponse>> = MutableLiveData<List<LatestOrderResponse>>()
-
-//    val _ShoppingCart = mutableStateListOf<ShoppingCart>()
-//    val shoppingCart:MutableList<ShoppingCart> = _ShoppingCart
     var allUserInfo:MutableLiveData<HashMap<String, Any>> = MutableLiveData<HashMap<String, Any>>()
     var gradeInfo:Grade? = null
     var userInfo:User? = null
+    var commentList=MutableLiveData<MutableList<MenuDetailWithCommentResponse>>(mutableListOf())
+    var prodId = -1
 
     init {
         getProductList()
         getRecentOrderList(user.id)
-//        ShoppingCart.value = mutableListOf()
         getUserInfo(user.id)
-
     }
+
+    // 상품 리스트 가져오기
     private fun getProductList(){
         CoroutineScope(Dispatchers.Main).launch {
             val result = RetrofitUtil.productService.getProductList()
@@ -50,20 +49,25 @@ class MainViewModel():ViewModel() {
             else allProduct.value = result
         }
     }
+
+    // 장바구니 리스트 가져오기
     fun getShoppingCart():MutableLiveData<MutableList<ShoppingCart>>{
         val temp = _ShoppingCart
         return temp
     }
+
+    // 장바구니 넣기
     fun addShop(item:ShoppingCart){
         _ShoppingCart.value = _ShoppingCart.value?.plus(listOf(item)) as MutableList<ShoppingCart>?
     }
+
+    //장바구니 삭제
     fun removeShop(index:ShoppingCart){
         _ShoppingCart.value = _ShoppingCart.value?.filter { it != index }?.toMutableList()
         getUserInfo(user.id)
     }
 
-
-
+    // 최근 주문정보 가져오기
     fun getRecentOrderList(id:String){
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -86,6 +90,7 @@ class MainViewModel():ViewModel() {
         }
     }
 
+    //유저정보 가져오기
     fun getUserInfo(id:String){
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -148,10 +153,45 @@ class MainViewModel():ViewModel() {
         this.userInfo = user
     }
 
+    //장바구니 주문 완료하기
     fun completeOrder(order: Order){
         CoroutineScope(Dispatchers.IO).launch {
             val orderId =RetrofitUtil.orderService.makeOrder(order)
             Log.d("view_Order","$orderId")
+            getRecentOrderList(order.userId)
+        }
+        _ShoppingCart.value = mutableListOf()
+    }
+
+    //상품별 코멘트 리스트 가져오기
+    fun getProductCommentInfo(id:Int){
+        CoroutineScope(Dispatchers.Main).launch {
+           commentList.value =RetrofitUtil.productService.getProductWithComments(id) as MutableList<MenuDetailWithCommentResponse>
+        }
+        prodId = id
+    }
+
+    //상품별 코멘트 삭제
+    fun removeComment(id:Int){
+        CoroutineScope(Dispatchers.Main).launch {
+            val job = CoroutineScope(Dispatchers.IO).async{
+                RetrofitUtil.commentService.delete(id)
+            }
+            job.await()
+            getProductCommentInfo(prodId)
+        }
+
+
+    }
+    //상품별 코멘트 넣기
+    fun addComment(comment:Comment){
+        CoroutineScope(Dispatchers.Main).launch {
+            val job = CoroutineScope(Dispatchers.IO).async{
+                RetrofitUtil.commentService.insert(comment)
+            }
+            job.await()
+            getProductCommentInfo(prodId)
         }
     }
+
 }

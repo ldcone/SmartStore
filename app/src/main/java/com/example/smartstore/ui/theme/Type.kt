@@ -45,8 +45,9 @@ val Typography = Typography(
     ),
     h4 = TextStyle(
         fontFamily = ElandChoiceface,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        color = CaffeDarkBrown
     ),
     h5 = TextStyle(
         fontFamily = ElandChoiceface,

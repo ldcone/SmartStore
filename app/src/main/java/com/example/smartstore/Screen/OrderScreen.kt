@@ -151,6 +151,7 @@ fun Grid(prodlist : List<Product>?,viewModel: MainViewModel,onItemClicked: (Prod
                     modifier = Modifier.clickable {
                        val prod = prodlist[prodlist.size -it -1]
                         Log.d("orderClicked","$prod")
+                        viewModel.getProductCommentInfo(prod.id)
                         onItemClicked(prod)
                     }
                 )

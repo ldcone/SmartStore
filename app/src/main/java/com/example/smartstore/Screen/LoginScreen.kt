@@ -179,8 +179,8 @@ fun LoginComponent(
     onLoginButtonClicked: (LoginUiState) -> Unit,
     onJoinButtonClicked:() ->(Unit)
 ){
-    var id by remember { mutableStateOf("id 01") }
-    var password by remember { mutableStateOf("pass 01") }
+    var id by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     Column(
     ){
         Image(painter = painterResource(id = R.drawable.logo)
