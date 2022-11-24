@@ -14,17 +14,12 @@ import java.io.IOException
 private const val TAG = "OrderDetail_싸피"
 class MyOrderDetailViewModel(order:LatestOrderResponse?):ViewModel() {
     var orderDetailList: MutableLiveData<List<OrderDetailResponse>> = MutableLiveData<List<OrderDetailResponse>>()
+    var order:LatestOrderResponse? = order
 
-    init {
-        if(order != null){
-            getOrderDetail(order.orderId)
-        }
-    }
-
-    private fun getOrderDetail(orderId:Int){
+    fun getOrderDetail(){
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val result = RetrofitUtil.orderService.getOrderDetail(orderId)
+                val result = RetrofitUtil.orderService.getOrderDetail(order!!.orderId)
                 Log.d("recentOrderList", "${result.body()}")
 
                 if(result.code() == 200){

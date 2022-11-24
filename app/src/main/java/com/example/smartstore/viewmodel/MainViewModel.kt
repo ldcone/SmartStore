@@ -1,9 +1,11 @@
 package com.example.smartstore.viewmodel
 
 import android.content.Context
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide.init
 import com.example.smartstore.ApplicationClass
 import com.example.smartstore.MainActivity
 import com.ssafy.smartstore.dto.Product
@@ -12,8 +14,10 @@ import com.google.gson.Gson
 import com.ssafy.smartstore.dto.*
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
+import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
+import retrofit2.Response
 import java.io.IOException
 
 const val HOME = "home"
@@ -33,6 +37,16 @@ class MainViewModel():ViewModel() {
     var userInfo:User? = null
     var commentList=MutableLiveData<MutableList<MenuDetailWithCommentResponse>>(mutableListOf())
     var prodId = -1
+
+    // 위치 정보 가져오기 위한 권한 승인여부
+    var needRequest = false
+    private var currentLocation = Location("current")
+    var cafeLocation = Location("cafe").apply {
+        latitude = 36.1079753
+        longitude = 128.418512
+    }
+    // 현재 위치 ~ 카페 간 거리
+    var distanceToCafe:MutableLiveData<Int> = MutableLiveData<Int>()
 
     init {
         getProductList()
@@ -194,4 +208,65 @@ class MainViewModel():ViewModel() {
         }
     }
 
+
+    // 현재 위치 좌표 설정하기
+    fun setCurrentLocation(latitude:Double, longitude:Double){
+        currentLocation.latitude = latitude
+        currentLocation.longitude = longitude
+    }
+
+    // 현재 위치와 카페 간 거리 구하기
+    fun getDistanceByCafe(){
+        val distance = currentLocation.distanceTo(cafeLocation).toInt()
+        Log.d(TAG, "getDistanceByCafe 현재 위치 : ${currentLocation.latitude} / ${currentLocation.longitude}")
+        Log.d(TAG, "getDistanceByCafe 카페 위치: ${cafeLocation.latitude} / ${cafeLocation.longitude}")
+        Log.d(TAG, "getDistanceByCafe 거리 : ${distance}m")
+        distanceToCafe.value = distance
+    }
+
+    // 메인에서 최근 주문 선택했을 때 장바구니에 담기
+    fun addShopCartWithLatestOrder(item:LatestOrderResponse){
+        CoroutineScope(Dispatchers.Main).launch {
+            var orderDetailList:List<OrderDetailResponse> = listOf()
+
+            val job = CoroutineScope(Dispatchers.IO).async{
+                try {
+                    val result = RetrofitUtil.orderService.getOrderDetail(item!!.orderId)
+                    Log.d("recentOrderList", "${result.body()}")
+
+                    if(result.code() == 200){
+                        if(result.body() == null || result.body()!!.size == 0){
+                            orderDetailList = listOf()
+                        }else{
+                            orderDetailList = result.body()!!
+                            Log.d(TAG, "getOrderDetail: ${orderDetailList}")
+                        }
+                    }else{
+                        orderDetailList = listOf()
+                    }
+                }catch(e: IOException){
+                    Log.d(TAG, "getOrderDetail: ${e.message}")
+                }
+            }
+            job.await()
+
+            Log.d(TAG, "addShopCartWithLatestOrder 매개변수값: ${item} ")
+            Log.d(TAG, "넘어온 orderDetail: $orderDetailList")
+
+            if(orderDetailList.size > 0){
+                for(product in orderDetailList){
+                    val temp = ShoppingCart(product.productId,
+                        product.img,
+                        product.productName,
+                        product.quantity,
+                        product.unitPrice,
+                        (product.quantity * product.unitPrice),
+                        product.productType)
+                    addShop(temp)
+                }
+            }
+
+            Log.d(TAG, "shoppingCart 담긴 값: ${_ShoppingCart.value}")
+        }
+    }
 }

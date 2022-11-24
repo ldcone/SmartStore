@@ -77,6 +77,12 @@ dependencies {
     implementation 'com.github.a914-gowtham:compose-ratingbar:1.2.4'
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+    // google map
+    implementation 'com.google.maps.android:maps-compose:2.7.2'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    // Ted Permission
+    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
     implementation 'com.google.firebase:firebase-messaging-ktx'
