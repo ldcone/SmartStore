@@ -181,6 +181,7 @@ fun Grid(prodlist : List<Product>?,viewModel: MainViewModel,onItemClicked: (Prod
                     modifier = Modifier.clickable {
                        val prod = prodlist[prodlist.size -it -1]
                         Log.d("orderClicked","$prod")
+                        viewModel.getProductCommentInfo(prod.id)
                         onItemClicked(prod)
                     }
                 )
@@ -230,8 +231,8 @@ fun FloatingActionButton(onItemClicked: () -> Unit){
             .fillMaxWidth()
             .fillMaxHeight()
             .fillMaxSize()
-            .padding(bottom = 20.dp, end = 20.dp),
-        verticalArrangement = Arrangement.Bottom,
+            .padding(end = 23.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(

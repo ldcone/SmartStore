@@ -1,6 +1,8 @@
 package com.example.smartstore
 
 import android.app.Application
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.ssafy.smartstore.util.SharedPreferencesUtil
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -37,11 +39,15 @@ class ApplicationClass: Application() {
 
         //shared preference 초기화
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
+        // firebase token json 으로 받기 위해 lenient 설정
+        val gson : Gson = GsonBuilder()
+            .setLenient()
+            .create()
 
         // 앱이 처음 생성되는 순간, retrofit 인스턴스를 생성
         retrofit = Retrofit.Builder()
             .baseUrl(SERVER_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 }

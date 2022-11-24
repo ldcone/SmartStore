@@ -7,15 +7,10 @@ import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -24,17 +19,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
-import com.example.smartstore.R
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.CaffeMenuBack
 import com.example.smartstore.ui.theme.SmartStoreTheme
@@ -44,9 +33,7 @@ import com.ssafy.smartstore.dto.Order
 import com.ssafy.smartstore.dto.OrderDetail
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
-import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.util.CommonUtils
-import com.ssafy.smartstore.util.RetrofitUtil
 import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 @SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState",
@@ -54,15 +41,15 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
 )
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
- fun ShoppingCartScreen( viewModel: MainViewModel,onItemClicked:(Product)->(Unit)){
+ fun ShoppingCartScreen( viewModel: MainViewModel,onItemClicked:()->(Unit)){
 
     val shopList = viewModel.getShoppingCart().observeAsState(mutableListOf())
     val mContext = LocalContext.current
     var price =0
-    for(item in shopList?.value!!){
+    for(item in shopList.value!!){
         price+=item.totalPrice
     }
-    Log.d("shop","${shopList}")
+    Log.d("shop","$shopList")
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,7 +89,7 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
                 Text(text= "${price}원")
             }
             Button(onClick = {
-                makeOrderData(viewModel = viewModel, list =shopList,mContext )
+                makeOrderData(viewModel = viewModel, list =shopList,mContext,onItemClicked )
                              },
             Modifier.weight(1f)) {
                 Text("주문")
@@ -110,33 +97,38 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 
         }
-
-
-//        Grid(prodlist = prodlist2,viewModel,onItemClicked)
     }
 }
 
-private fun makeOrderData(viewModel: MainViewModel,list:State<MutableList<ShoppingCart>>?,mContext: Context){
-//    val userId = SharedPreferencesUtil(requireContext()).getUser().id
-    val userId = "id 01"
+private fun makeOrderData(
+    viewModel: MainViewModel,
+    list: State<MutableList<ShoppingCart>>?,
+    mContext: Context,
+    onItemClicked: () -> Unit
+){
+    val userId = SharedPreferencesUtil(mContext).getUser().id
     val tableNum = 0
     val listDetail = arrayListOf<OrderDetail>()
-
-    // change ShippingCart to OrderDetail
     for(item in list?.value!!){
         listDetail.add(OrderDetail(item.menuId, item.menuCnt))
     }
      val order = Order(0, userId, tableNum.toString(),
         null, "N", listDetail)
-    completedOrder(viewModel,order,mContext)
+    completedOrder(viewModel,order,mContext,onItemClicked)
 }
 
-private fun completedOrder(viewModel: MainViewModel,order: Order,mContext: Context){
+private fun completedOrder(
+    viewModel: MainViewModel,
+    order: Order,
+    mContext: Context,
+    onItemClicked: () -> Unit
+){
     val temp = viewModel.getShoppingCart()
     if(temp.value?.size== 0){
         Toast.makeText(mContext,"담겨있는 상품이 없습니다.", Toast.LENGTH_SHORT).show()
     }else{
         viewModel.completeOrder(order)
+        onItemClicked()
     }
 }
 
@@ -190,9 +182,9 @@ fun ShopGridItem(item: ShoppingCart,viewModel: MainViewModel,list: State<Mutable
             }
 
             Spacer(Modifier.height(16.dp))
-            Text("${item.menuName}", style = MaterialTheme.typography.subtitle1)
+            Text(item.menuName, style = MaterialTheme.typography.subtitle1)
             Spacer(Modifier.height(8.dp))
-            Text("${CommonUtils.makeComma(item.totalPrice)}", style = MaterialTheme.typography.subtitle1)
+            Text(CommonUtils.makeComma(item.totalPrice), style = MaterialTheme.typography.subtitle1)
             IconButton(
                 onClick =
                 {

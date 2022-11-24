@@ -68,9 +68,6 @@ class MainActivity : ComponentActivity() {
                         val viewModel:MainViewModel = viewModel(
                             it,
                             "MainViewModel",
-                            MainViewModelFactory(
-//                                LocalContext.current.applicationContext as Application
-                            )
                         )
                         mainViewModel = viewModel
                         MainApp(viewModel, user)
