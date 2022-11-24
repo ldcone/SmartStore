@@ -8,11 +8,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
@@ -27,11 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,17 +39,11 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.google.android.gms.location.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity_싸피"
 class MainActivity : ComponentActivity() {
@@ -81,10 +68,10 @@ class MainActivity : ComponentActivity() {
             // token log 남기기
             Log.d(TAG, "token: ${task.result?:"task.result is null"}")
             if(task.result != null){
-                CoroutineScope(Dispatchers.IO).launch {
-                    val temp = Token(0,SharedPreferencesUtil(applicationContext).getUser().id,task.result!!)
-                    RetrofitUtil.tokenService.uploadToken(temp)
-                }
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val temp = Token(0,SharedPreferencesUtil(applicationContext).getUser().id,task.result!!)
+//                    RetrofitUtil.tokenService.uploadToken(temp)
+//                }
             }
         })
         createNotificationChannel(channel_id, "ssafy")
