@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,9 +33,18 @@ import com.ssafy.smartstore.dto.User
 
 @Composable
 fun MainApp(viewModel: MainViewModel, user: User){
+    val shownBottomNav by viewModel.shownNavigationBar.observeAsState()
     val navController = rememberNavController()
+
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(true)
+
     Scaffold(
-        bottomBar = { BottomNavigation(navController = navController)}
+        bottomBar = {
+            if(shownBottomNav!!){
+                BottomNavigation(navController = navController)
+            }
+        }
     ) { innerPadding->
         Box(Modifier.padding(innerPadding)){
             NavigationGraph(navController = navController, viewModel, user)

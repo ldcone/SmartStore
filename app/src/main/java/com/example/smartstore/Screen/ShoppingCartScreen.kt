@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.smartstore.ApplicationClass
 import com.example.smartstore.ui.theme.CaffeDarkBrown
+import com.example.smartstore.ui.theme.CaffeLightWhite
 import com.example.smartstore.ui.theme.CaffeMenuBack
 import com.example.smartstore.ui.theme.SmartStoreTheme
 import com.example.smartstore.viewmodel.MainViewModel
@@ -33,6 +34,7 @@ import com.ssafy.smartstore.dto.Order
 import com.ssafy.smartstore.dto.OrderDetail
 import com.ssafy.smartstore.dto.Product
 import com.ssafy.smartstore.dto.ShoppingCart
+import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.CommonUtils
 import com.ssafy.smartstore.util.SharedPreferencesUtil
 
@@ -42,6 +44,8 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
  fun ShoppingCartScreen( viewModel: MainViewModel,onItemClicked:()->(Unit)){
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(false)
 
     val shopList = viewModel.getShoppingCart().observeAsState(mutableListOf())
     val mContext = LocalContext.current
@@ -65,7 +69,7 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
         ){
             Text(
                 text = "장바구니",
-                Modifier.padding(start = 30.dp, bottom = 30.dp),
+                Modifier.padding(start = 24.dp),
                 fontWeight = FontWeight.Bold,
                 color = Color.Red,
                 fontSize = 28.sp,
@@ -74,7 +78,8 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
         Column(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()) {
+                .fillMaxHeight()
+                .padding(8.dp)) {
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -83,15 +88,15 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
             ){
                 ShopGridLayout(list= shopList,viewModel )
             }
-            Row(Modifier.weight(1f),
+            Row(Modifier.fillMaxWidth().padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween){
-                Text(text = "총 ${shopList.value.size}개")
-                Text(text= "${price}원")
+                Text(text = "총 ${shopList.value.size}개", style = MaterialTheme.typography.h4)
+                Text(text= "${CommonUtils.makeComma(price)}", style=MaterialTheme.typography.h4)
             }
             Button(onClick = {
                 makeOrderData(viewModel = viewModel, list =shopList,mContext,onItemClicked )
                              },
-            Modifier.weight(1f)) {
+            Modifier.fillMaxWidth()) {
                 Text("주문")
             }
 
@@ -134,7 +139,12 @@ private fun completedOrder(
 
 @Composable
 fun ShopGridLayout(list:State<MutableList<ShoppingCart>>?,viewModel: MainViewModel){
-    LazyColumn(){
+    LazyColumn(
+        Modifier.fillMaxWidth().fillMaxHeight()
+            .border(
+                BorderStroke(2.dp, CaffeDarkBrown),
+                shape = MaterialTheme.shapes.large)
+    ){
         if(list != null){
             items(list.value.size){
                 ShopGridItem(item = list.value[it],viewModel,list)
@@ -146,66 +156,74 @@ fun ShopGridLayout(list:State<MutableList<ShoppingCart>>?,viewModel: MainViewMod
     }
 }
 
+
 @Composable
 fun ShopGridItem(item: ShoppingCart,viewModel: MainViewModel,list: State<MutableList<ShoppingCart>>?){
-    Card(
-        Modifier
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
             .fillMaxWidth()
-            .border(
-                width = 2.dp,
-                color = CaffeDarkBrown,
-                shape = MaterialTheme.shapes.large
-            )
+            .padding(16.dp)
+            .background(CaffeLightWhite)
     ){
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment =Alignment.CenterVertically
+        Box(
+            Modifier
+                .clip(MaterialTheme.shapes.large)
+                .width(100.dp)
+                .height(100.dp)
+                .background(CaffeMenuBack)
+                .weight(1.0f),
+            contentAlignment = Alignment.Center
+        ){
+            GlideImage(
+                imageModel = "${ApplicationClass.MENU_IMGS_URL}${item.menuImg}",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .width(90.dp)
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(1.0f)
         ) {
-            Box(
+            Text(text = "${item.menuName}", style = MaterialTheme.typography.subtitle1)
+            Spacer(Modifier.height(32.dp))
+            Text(text = "${CommonUtils.makeComma(item.menuPrice)}", style = MaterialTheme.typography.subtitle1)
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(1.0f)
+        ) {
+            Text(text = "${item.menuCnt}" + if(item.type == "coffee"){" 잔"} else{" 개"},
+                style = MaterialTheme.typography.subtitle1)
+            Spacer(Modifier.height(32.dp))
+            Text(text = "${CommonUtils.makeComma(item.totalPrice)}", style = MaterialTheme.typography.subtitle1)
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(
+            onClick =
+            {
+                viewModel.removeShop(item)
+            },
+            Modifier
+                .padding(start = 3.dp)
+                .width(32.dp)
+                .height(32.dp)
+        ) {
+            Icon(
+                Icons.Filled.Close,
+                contentDescription = null,
                 Modifier
-                    .clip(MaterialTheme.shapes.large)
-                    .width(100.dp)
-                    .height(90.dp)
-                    .background(CaffeMenuBack)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = Alignment.Center
-            ){
-                GlideImage(
-                    imageModel = "${ApplicationClass.MENU_IMGS_URL}${item.menuImg}",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .width(90.dp)
-                        .height(100.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
-            Text(item.menuName, style = MaterialTheme.typography.subtitle1)
-            Spacer(Modifier.height(8.dp))
-            Text(CommonUtils.makeComma(item.totalPrice), style = MaterialTheme.typography.subtitle1)
-            IconButton(
-                onClick =
-                {
-                    viewModel.removeShop(item)
-                },
-                Modifier
-                    .padding(start = 3.dp)
-                    .width(32.dp)
-                    .height(32.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Close,
-                    contentDescription = null,
-                    Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                )
-            }
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            )
         }
     }
-
 }
 
 

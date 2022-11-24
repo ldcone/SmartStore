@@ -61,6 +61,10 @@ fun MyPageApp(
 ){
     val context = LocalContext.current
     val navController = rememberNavController()
+
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(true)
+
     Scaffold{
         NavHost(
             navController = navController,

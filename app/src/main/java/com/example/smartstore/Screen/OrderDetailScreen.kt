@@ -3,8 +3,10 @@ package com.example.smartstore.Screen
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +41,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.example.smartstore.ui.theme.*
 import com.ssafy.smartstore.dto.Comment
@@ -67,6 +71,10 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
     }
     val focusManager = LocalFocusManager.current
     Log.d("comment","${commentList.value}")
+
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(false)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,14 +110,15 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
         }
 
         Row(
-            Modifier
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
                 .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
         ){
             Text(text = "수량", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             IconButton(
                 onClick = { counts++ },
                 Modifier
-                    .padding(start = 190.dp)
+                    .padding(start = 200.dp)
                     .width(32.dp)
                     .height(32.dp)
             ) {
@@ -176,7 +185,8 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(70.dp),
+                .height(70.dp)
+                .padding(8.dp),
             horizontalArrangement = Arrangement.Center) {
             OutlinedTextField(
                 value = comment,
@@ -193,6 +203,7 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
+                    .fillMaxWidth(0.8f)
                     .focusRequester(focusRequester = focusRequester)
             )
             Button(
@@ -208,13 +219,16 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
                           },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
+                    .fillMaxWidth()
                     .height(60.dp)
                     .padding(top = 10.dp, start = 10.dp)
             ) {
                 Text("등록")
             }
         }
-        Column() {
+        Column(
+            Modifier.padding(8.dp)
+        ) {
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -257,7 +271,11 @@ fun CommentGridLayout(
     list: State<MutableList<MenuDetailWithCommentResponse>>,
     userId: String
 ){
-    LazyColumn(){
+    LazyColumn(
+        Modifier
+            .fillMaxHeight()
+            .padding(8.dp)
+    ){
         items(list.value.size){
             if(list.value[0].productCommentTotalCnt ==0){
                 Log.d("comment","isEmpty")
@@ -275,30 +293,57 @@ fun CommentGridItem(
     comment: MenuDetailWithCommentResponse,
     userId: String
 ){
-    Row(Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.SpaceBetween){
-        Spacer(modifier = Modifier.width(20.dp))
+    Row(modifier = Modifier.fillMaxWidth().height(50.dp).padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ){
         Text(comment.commentContent!!,
-            style = MaterialTheme.typography.h4
-        )
+            style = TextStyle( fontFamily = ElandChoiceface,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = CaffeDarkBrown,
+                    textAlign = TextAlign.Start),
+            modifier =
+            if(comment.userId.equals(userId)){
+                Modifier.fillMaxWidth(0.8f)
+            }else{
+                Modifier.fillMaxWidth()
+            }
 
-        if(comment.userId.equals(userId)){
-            IconButton(
-                onClick = {
-                          viewModel.removeComment(comment.commentId)
-                },
-                Modifier
-                    .padding(start = 3.dp)
-                    .width(32.dp)
-                    .height(32.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Delete,
-                    contentDescription = null,
+
+        )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier =
+            if(comment.userId.equals(userId)){
+                Modifier.fillMaxWidth().height(32.dp)
+                    .border(BorderStroke(1.dp, CaffeBrown),
+                        shape = MaterialTheme.shapes.large
+                    )
+            }else{
+                Modifier.height(32.dp)
+            }
+
+        ){
+            if(comment.userId.equals(userId)){
+                IconButton(
+                    onClick = {
+                        viewModel.removeComment(comment.commentId)
+                    },
                     Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                )
+                        .padding(start = 3.dp)
+
+                ) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = null,
+                        Modifier
+                            .width(32.dp)
+                            .height(32.dp)
+                    )
+                }
+            }else{
+                Spacer(modifier = Modifier.fillMaxWidth(0.2f))
             }
         }
 

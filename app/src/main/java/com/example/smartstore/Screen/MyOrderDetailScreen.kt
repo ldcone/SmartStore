@@ -44,6 +44,8 @@ fun MyOrderDetailScreen(
     val list by viewModel.orderDetailList.observeAsState(listOf())
     viewModel.getOrderDetail()
 
+    mainViewModel.setVisibleBottomNav(false)
+
     Column(
         Modifier
             .fillMaxWidth()
