@@ -47,7 +47,7 @@ import com.ssafy.smartstore.util.CommonUtils
 import com.ssafy.smartstore.util.SharedPreferencesUtil
 
 
-@SuppressLint("CoroutineCreationDuringComposition", "RememberReturnType")
+@SuppressLint("CoroutineCreationDuringComposition", "RememberReturnType", "SuspiciousIndentation")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
  fun OrderDetailScreen(viewModel: MainViewModel,onItemClick:()->(Unit)){

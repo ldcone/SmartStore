@@ -16,6 +16,7 @@ class ApplicationClass: Application() {
         lateinit var retrofit: Retrofit
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
         const val SERVER_URL = "http://3.35.218.206:8080/"
+//        const val SERVER_URL = "http://192.168.33.123:8080/"
         const val MENU_IMGS_URL = "${SERVER_URL}imgs/menu/"
         const val GRADE_IMGS_URL = "${SERVER_URL}imgs/grade/"
 //        var userInfo:UserDTO? = null

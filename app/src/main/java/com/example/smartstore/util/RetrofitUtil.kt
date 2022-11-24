@@ -1,10 +1,12 @@
 package com.ssafy.smartstore.util
 
 import com.example.smartstore.ApplicationClass
+import com.example.smartstore.api.FirebaseTokenService
 import com.ssafy.smartstore.api.CommentApi
 import com.ssafy.smartstore.api.OrderApi
 import com.ssafy.smartstore.api.ProductApi
 import com.ssafy.smartstore.api.UserApi
+import retrofit2.create
 
 class RetrofitUtil {
     companion object{
@@ -12,5 +14,6 @@ class RetrofitUtil {
         val orderService = ApplicationClass.retrofit.create(OrderApi::class.java)
         val productService = ApplicationClass.retrofit.create(ProductApi::class.java)
         val userService = ApplicationClass.retrofit.create(UserApi::class.java)
+        val tokenService = ApplicationClass.retrofit.create(FirebaseTokenService::class.java)
     }
 }
