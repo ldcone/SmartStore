@@ -16,6 +16,7 @@ import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
 import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
+import com.ssafy.smartstore.util.SharedPreferencesUtil
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.io.IOException
@@ -170,11 +171,12 @@ class MainViewModel():ViewModel() {
     }
 
     //장바구니 주문 완료하기
-    fun completeOrder(order: Order){
+    fun completeOrder(order: Order,context: Context){
         CoroutineScope(Dispatchers.IO).launch {
             val orderId =RetrofitUtil.orderService.makeOrder(order)
             Log.d("view_Order","$orderId")
             getRecentOrderList(order.userId)
+            sendPush(context)
         }
         _ShoppingCart.value = mutableListOf()
     }
@@ -275,5 +277,14 @@ class MainViewModel():ViewModel() {
     // bottom navigation bar 표시 여부 나타내기
     fun setVisibleBottomNav(isVisible:Boolean){
         shownNavigationBar.value = isVisible
+    }
+
+    // 푸쉬알림 보내기
+    fun sendPush(context: Context){
+        CoroutineScope(Dispatchers.IO).launch {
+            val token = Token(0,SharedPreferencesUtil(context).getUser().id,"1")
+            RetrofitUtil.tokenService.updateToken(token)
+        }
+
     }
 }
