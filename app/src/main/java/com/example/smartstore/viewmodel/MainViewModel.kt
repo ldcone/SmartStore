@@ -148,11 +148,6 @@ class MainViewModel():ViewModel() {
         this.userInfo = user
     }
 
-    fun logout(context: Context){
-        ApplicationClass.sharedPreferencesUtil.deleteUser()
-        (context as MainActivity).finish()
-    }
-
     fun completeOrder(order: Order){
         CoroutineScope(Dispatchers.IO).launch {
             val orderId =RetrofitUtil.orderService.makeOrder(order)

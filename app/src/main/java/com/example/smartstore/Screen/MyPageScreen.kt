@@ -1,6 +1,8 @@
 package com.example.smartstore.Screen
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,6 +33,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
+import com.example.smartstore.LoginActivity
+import com.example.smartstore.MainActivity
 import com.example.smartstore.R
 import com.example.smartstore.ui.theme.CaffeBrown
 import com.example.smartstore.ui.theme.CaffeDarkBrown
@@ -71,7 +75,7 @@ fun MyPageApp(
                         navController.navigate(MyPageScreens.MyOrderDetailScreen.name)
                     },
                     onLogOutClicked = {
-                        viewModel.logout(context)
+                        logout(context)
                     }
                 )
             }
@@ -253,6 +257,14 @@ fun OrderGridItem(item:LatestOrderResponse, onItemClicked:(LatestOrderResponse)-
             Text("${CommonUtils.getFormattedItemDate(item.orderDate)}", style = MaterialTheme.typography.subtitle1)
         }
     }
+}
+
+private fun logout(context: Context){
+    val mainActivity = (context as MainActivity)
+    ApplicationClass.sharedPreferencesUtil.deleteUser()
+    val intent = Intent(context, LoginActivity::class.java)
+    mainActivity.startActivity(intent)
+    mainActivity.finish()
 }
 
 @Preview

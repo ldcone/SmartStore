@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import com.ssafy.smartstore.dto.ShoppingCart
 import com.example.smartstore.ui.theme.*
+import com.ssafy.smartstore.util.CommonUtils
 
 
 @SuppressLint("CoroutineCreationDuringComposition", "RememberReturnType")
@@ -66,7 +67,7 @@ import com.example.smartstore.ui.theme.*
             GImage(prod = prod)
         }
         Text(
-            "커피",
+            "${prod.name}",
             modifier = Modifier
                 .padding(start = 25.dp, bottom = 20.dp),
             fontSize = 35.sp,
@@ -77,7 +78,7 @@ import com.example.smartstore.ui.theme.*
                 .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
         ){
             Text(text = "가격", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            Text(text = "1,500원",
+            Text(text = "${CommonUtils.makeComma(prod.price)}",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 200.dp)

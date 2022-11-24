@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
+import com.example.smartstore.LoginActivity
 import com.example.smartstore.MainActivity
 import com.example.smartstore.R
 import com.example.smartstore.data.LoginUiState
@@ -77,7 +78,9 @@ fun LoginApp(
                                 job.await()
 
                                 if(loginUser != null){
-                                    context.startActivity(Intent(context, MainActivity::class.java))
+                                    val loginActivity = context as LoginActivity
+                                    loginActivity.startActivity(Intent(context, MainActivity::class.java))
+                                    loginActivity.finish()
                                     ApplicationClass.sharedPreferencesUtil.addUser(loginUser!!)
                                 }else{
                                     Toast.makeText(context, "아이디 혹은 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
