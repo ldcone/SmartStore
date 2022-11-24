@@ -235,7 +235,7 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
                     counts,
                     prod.price,
                     prod.price*counts,
-                    "")
+                    prod.type)
                 viewModel.addShop(temp)
                 onItemClick() },
                 Modifier

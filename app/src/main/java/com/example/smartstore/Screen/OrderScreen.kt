@@ -92,11 +92,7 @@ fun OrderApp(viewModel: MainViewModel){
                     } )
             }
             composable(route = OrderScreen.MapScreen.name){
-                MapScreen(viewModel = viewModel,
-//                    onItemClicked ={
-//                        navController.popBackStack(OrderScreen.OrderScreen.name, inclusive = false)
-//                    }
-                )
+                MapScreen(viewModel = viewModel)
             }
         }
     }

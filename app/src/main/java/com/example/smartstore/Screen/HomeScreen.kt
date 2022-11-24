@@ -1,10 +1,8 @@
 package com.example.smartstore.Screen
 
+import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -12,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.smartstore.ApplicationClass
 import com.example.smartstore.ui.theme.CaffeDarkBrown
 import com.example.smartstore.ui.theme.CaffeMenuBack
@@ -40,10 +42,45 @@ import com.ssafy.smartstore.util.CommonUtils
 import java.util.*
 
 private const val TAG = "HomeScreen_싸피"
+
+enum class HomeScreen(){
+    HomeScreen,
+    ShoppingCartScreen
+}
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun HomeApp(
+    user:User,
+    viewModel:MainViewModel
+){
+    val navController = rememberNavController()
+    Scaffold {
+        NavHost(
+            navController = navController,
+            startDestination = HomeScreen.HomeScreen.name
+        ){
+            composable(route = HomeScreen.HomeScreen.name){
+                HomeScreen(user, viewModel,
+                toShoppingCart = {
+                    navController.navigate(HomeScreen.ShoppingCartScreen.name)
+                })
+            }
+            composable(route = HomeScreen.ShoppingCartScreen.name){
+                ShoppingCartScreen(viewModel = viewModel,
+                    onItemClicked = {
+                        navController.popBackStack(HomeScreen.HomeScreen.name, inclusive = false)
+                    })
+            }
+        }
+    }
+}
+
 @Composable
 fun HomeScreen(
     user:User,
-    viewModel:MainViewModel
+    viewModel:MainViewModel,
+    toShoppingCart: () -> Unit
 ){
     val recentList by viewModel.allRecentOrder.observeAsState(listOf())
 
@@ -79,17 +116,21 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ){
-            RecentGridLayout(list = recentList)
+            RecentGridLayout(list = recentList, viewModel, toShoppingCart)
         }
     }
 }
 
 @Composable
-fun RecentGridLayout(list: List<LatestOrderResponse>?){
+fun RecentGridLayout(
+    list: List<LatestOrderResponse>?,
+    viewModel: MainViewModel,
+    toShoppingCart: () -> Unit
+){
     LazyRow{
         if(list != null){
             items(list.size){
-                RecentGridItem(item = list[it])
+                RecentGridItem(item = list[it], viewModel, toShoppingCart)
                 Spacer(modifier = Modifier.width(16.dp))
             }
         }else{
@@ -99,7 +140,11 @@ fun RecentGridLayout(list: List<LatestOrderResponse>?){
 }
 
 @Composable
-fun RecentGridItem(item:LatestOrderResponse){
+fun RecentGridItem(
+    item:LatestOrderResponse,
+    viewModel: MainViewModel,
+    toShoppingCart:() -> Unit
+){
     Card(
         Modifier
             .width(180.dp)
@@ -108,7 +153,10 @@ fun RecentGridItem(item:LatestOrderResponse){
                 width = 2.dp,
                 color = CaffeDarkBrown,
                 shape = MaterialTheme.shapes.large
-            )
+            ).clickable {
+                viewModel.addShopCartWithLatestOrder(item)
+                toShoppingCart()
+            }
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -147,7 +195,7 @@ fun RecentGridItem(item:LatestOrderResponse){
 @Composable
 fun HomePreview(){
     SmartStoreTheme {
-        RecentGridItem(LatestOrderResponse("",0,"",0,"", Date(),'N',0,"",0))
+        //RecentGridItem(LatestOrderResponse("",0,"",0,"", Date(),'N',0,"",0))
         //HomeScreen(User("test","유저01","1234",0), viewModel())
     }
 }

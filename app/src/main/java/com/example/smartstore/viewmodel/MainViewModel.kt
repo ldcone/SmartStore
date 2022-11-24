@@ -14,8 +14,10 @@ import com.google.gson.Gson
 import com.ssafy.smartstore.dto.*
 import com.ssafy.smartstore.response.LatestOrderResponse
 import com.ssafy.smartstore.response.MenuDetailWithCommentResponse
+import com.ssafy.smartstore.response.OrderDetailResponse
 import com.ssafy.smartstore.util.RetrofitUtil
 import kotlinx.coroutines.*
+import retrofit2.Response
 import java.io.IOException
 
 const val HOME = "home"
@@ -220,5 +222,51 @@ class MainViewModel():ViewModel() {
         Log.d(TAG, "getDistanceByCafe 카페 위치: ${cafeLocation.latitude} / ${cafeLocation.longitude}")
         Log.d(TAG, "getDistanceByCafe 거리 : ${distance}m")
         distanceToCafe.value = distance
+    }
+
+    // 메인에서 최근 주문 선택했을 때 장바구니에 담기
+    fun addShopCartWithLatestOrder(item:LatestOrderResponse){
+        CoroutineScope(Dispatchers.Main).launch {
+            var orderDetailList:List<OrderDetailResponse> = listOf()
+
+            val job = CoroutineScope(Dispatchers.IO).async{
+                try {
+                    val result = RetrofitUtil.orderService.getOrderDetail(item!!.orderId)
+                    Log.d("recentOrderList", "${result.body()}")
+
+                    if(result.code() == 200){
+                        if(result.body() == null || result.body()!!.size == 0){
+                            orderDetailList = listOf()
+                        }else{
+                            orderDetailList = result.body()!!
+                            Log.d(TAG, "getOrderDetail: ${orderDetailList}")
+                        }
+                    }else{
+                        orderDetailList = listOf()
+                    }
+                }catch(e: IOException){
+                    Log.d(TAG, "getOrderDetail: ${e.message}")
+                }
+            }
+            job.await()
+
+            Log.d(TAG, "addShopCartWithLatestOrder 매개변수값: ${item} ")
+            Log.d(TAG, "넘어온 orderDetail: $orderDetailList")
+
+            if(orderDetailList.size > 0){
+                for(product in orderDetailList){
+                    val temp = ShoppingCart(product.productId,
+                        product.img,
+                        product.productName,
+                        product.quantity,
+                        product.unitPrice,
+                        (product.quantity * product.unitPrice),
+                        product.productType)
+                    addShop(temp)
+                }
+            }
+
+            Log.d(TAG, "shoppingCart 담긴 값: ${_ShoppingCart.value}")
+        }
     }
 }
