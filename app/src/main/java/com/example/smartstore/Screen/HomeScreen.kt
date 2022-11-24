@@ -54,6 +54,10 @@ fun HomeApp(
     user:User,
     viewModel:MainViewModel
 ){
+
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(true)
+
     val navController = rememberNavController()
     Scaffold {
         NavHost(

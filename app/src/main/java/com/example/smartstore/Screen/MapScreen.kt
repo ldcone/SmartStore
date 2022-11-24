@@ -25,6 +25,9 @@ import com.google.maps.android.compose.*
 fun MapScreen(
     viewModel: MainViewModel
 ){
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(false)
+
     Column(
         Modifier
             .fillMaxWidth()

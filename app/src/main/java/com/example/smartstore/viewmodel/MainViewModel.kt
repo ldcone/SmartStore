@@ -38,6 +38,8 @@ class MainViewModel():ViewModel() {
     var userInfo:User? = null
     var commentList=MutableLiveData<MutableList<MenuDetailWithCommentResponse>>(mutableListOf())
     var prodId = -1
+    // bottom navigation bar 보여주는 플래그
+    var shownNavigationBar:MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
 
     // 위치 정보 가져오기 위한 권한 승인여부
     var needRequest = false
@@ -270,6 +272,11 @@ class MainViewModel():ViewModel() {
 
             Log.d(TAG, "shoppingCart 담긴 값: ${_ShoppingCart.value}")
         }
+    }
+
+    // bottom navigation bar 표시 여부 나타내기
+    fun setVisibleBottomNav(isVisible:Boolean){
+        shownNavigationBar.value = isVisible
     }
 
     // 푸쉬알림 보내기
