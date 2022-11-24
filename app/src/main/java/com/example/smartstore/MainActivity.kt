@@ -68,10 +68,10 @@ class MainActivity : ComponentActivity() {
             // token log 남기기
             Log.d(TAG, "token: ${task.result?:"task.result is null"}")
             if(task.result != null){
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    val temp = Token(0,SharedPreferencesUtil(applicationContext).getUser().id,task.result!!)
-//                    RetrofitUtil.tokenService.uploadToken(temp)
-//                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    val temp = Token(0,SharedPreferencesUtil(applicationContext).getUser().id,task.result!!)
+                    RetrofitUtil.tokenService.uploadToken(temp)
+                }
             }
         })
         createNotificationChannel(channel_id, "ssafy")
