@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "60199462429",
+    "firebase_url": "https://startcampchatting-7fdf9-default-rtdb.firebaseio.com",
+    "project_id": "startcampchatting-7fdf9",
+    "storage_bucket": "startcampchatting-7fdf9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60199462429:android:46fa441658056384b288f4",
+        "android_client_info": {
+          "package_name": "com.example.smartstore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlTqquwL2NbzBw0lgky03G6rqNzsS_lxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60199462429:android:884c119b06b2c9ffb288f4",
+        "android_client_info": {
+          "package_name": "com.ssafy.firebase_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlTqquwL2NbzBw0lgky03G6rqNzsS_lxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60199462429:android:822b00f07c62a15bb288f4",
+        "android_client_info": {
+          "package_name": "com.ssufy.hw_android_component_01_dongcheonlee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60199462429-m3tt3g4hnqv6mln02p9fmjlblqd6h05d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssufy.hw_android_component_01_dongcheonlee",
+            "certificate_hash": "bdf7514a097ea87271751e98d0a800651d631c50"
+          }
+        },
+        {
+          "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlTqquwL2NbzBw0lgky03G6rqNzsS_lxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60199462429-lrkoheu5eb3sebi8h0fobdg409jra34u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
