@@ -200,8 +200,8 @@ fun FloatingActionButton(onItemClicked: () -> Unit){
             .fillMaxWidth()
             .fillMaxHeight()
             .fillMaxSize()
-            .padding(bottom = 20.dp, end = 20.dp),
-        verticalArrangement = Arrangement.Bottom,
+            .padding(end = 23.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(

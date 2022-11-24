@@ -39,7 +39,7 @@ class MainViewModel():ViewModel() {
         getProductList()
         getRecentOrderList(user.id)
 //        ShoppingCart.value = mutableListOf()
-//        getUserInfo(user.id)
+        getUserInfo(user.id)
 
     }
     private fun getProductList(){
@@ -59,7 +59,7 @@ class MainViewModel():ViewModel() {
     }
     fun removeShop(index:ShoppingCart){
         _ShoppingCart.value = _ShoppingCart.value?.filter { it != index }?.toMutableList()
-//        getUserInfo(user.id)
+        getUserInfo(user.id)
     }
 
 
