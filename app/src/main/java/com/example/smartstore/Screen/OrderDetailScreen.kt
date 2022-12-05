@@ -101,11 +101,11 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
             Modifier
                 .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
         ){
-            Text(text = "가격", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            Text(text = "가격",Modifier.weight(2.4f), fontSize = 25.sp, fontWeight = FontWeight.Bold,)
             Text(text = "${CommonUtils.makeComma(prod.price)}",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 200.dp)
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -114,7 +114,7 @@ import com.ssafy.smartstore.util.SharedPreferencesUtil
             modifier = Modifier
                 .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
         ){
-            Text(text = "수량", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            Text(text = "수량",Modifier.weight(2.3f), fontSize = 25.sp, fontWeight = FontWeight.Bold)
             IconButton(
                 onClick = { counts++ },
                 Modifier
@@ -293,57 +293,30 @@ fun CommentGridItem(
     comment: MenuDetailWithCommentResponse,
     userId: String
 ){
-    Row(modifier = Modifier.fillMaxWidth().height(50.dp).padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ){
+    Row(Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.SpaceBetween){
+        Spacer(modifier = Modifier.width(20.dp))
         Text(comment.commentContent!!,
-            style = TextStyle( fontFamily = ElandChoiceface,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = CaffeDarkBrown,
-                    textAlign = TextAlign.Start),
-            modifier =
-            if(comment.userId.equals(userId)){
-                Modifier.fillMaxWidth(0.8f)
-            }else{
-                Modifier.fillMaxWidth()
-            }
-
-
+            style = MaterialTheme.typography.h4
         )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier =
-            if(comment.userId.equals(userId)){
-                Modifier.fillMaxWidth().height(32.dp)
-                    .border(BorderStroke(1.dp, CaffeBrown),
-                        shape = MaterialTheme.shapes.large
-                    )
-            }else{
-                Modifier.height(32.dp)
-            }
 
-        ){
-            if(comment.userId.equals(userId)){
-                IconButton(
-                    onClick = {
-                        viewModel.removeComment(comment.commentId)
-                    },
+        if(comment.userId.equals(userId)){
+            IconButton(
+                onClick = {
+                          viewModel.removeComment(comment.commentId)
+                },
+                Modifier
+                    .padding(start = 3.dp)
+                    .width(32.dp)
+                    .height(32.dp)
+            ) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = null,
                     Modifier
-                        .padding(start = 3.dp)
-
-                ) {
-                    Icon(
-                        Icons.Filled.Delete,
-                        contentDescription = null,
-                        Modifier
-                            .width(32.dp)
-                            .height(32.dp)
-                    )
-                }
-            }else{
-                Spacer(modifier = Modifier.fillMaxWidth(0.2f))
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                )
             }
         }
 
