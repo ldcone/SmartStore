@@ -57,6 +57,10 @@ fun OrderApp(viewModel: MainViewModel){
     val navController = rememberNavController()
     val mainActivity = LocalContext.current as MainActivity
 
+    // bottom navigation bar shown
+    viewModel.setVisibleBottomNav(true)
+
+    // 현재 위치 가져오기
     mainActivity.getCurrentLocation()
 
     Scaffold {
